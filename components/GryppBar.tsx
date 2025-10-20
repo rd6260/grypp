@@ -2,7 +2,7 @@
 
 export default function NavigationBar() {
   return (
-    <nav className="bg-black text-white px-6 py-4">
+    <nav className="bg-black text-white px-6 py-4 rounded-[10]">
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
@@ -24,10 +24,10 @@ export default function NavigationBar() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2 text-sm font-medium border border-white rounded hover:bg-white hover:text-black transition-colors">
+          <button className="px-5 py-2 text-sm font-medium border border-white rounded-lg hover:bg-white hover:text-black transition-colors">
             BECOME A SPONSOR
           </button>
-          <button className="px-5 py-2 text-sm font-medium bg-white text-black rounded hover:bg-gray-200 transition-colors flex items-center gap-2">
+          <button className="px-5 py-2 text-sm font-medium bg-white text-black rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
             LOG IN
             <svg 
               width="14" 

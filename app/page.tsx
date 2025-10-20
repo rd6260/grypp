@@ -1,3 +1,4 @@
+import CreativityHero from '@/components/CreativityHeor';
 import NavigationBar from '@/components/GryppBar';
 import PrizePoolBanner from '@/components/PricePoolBanner';
 
@@ -8,6 +9,7 @@ export default function Home() {
       <div className='px-8 py-2'>
         <NavigationBar />
       </div>
+      <CreativityHero/>
     </div>
   );
 }
