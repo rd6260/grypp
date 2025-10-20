@@ -1,6 +1,6 @@
 export default function CreativityHero() {
   return (
-    <div className="w-full py-8 px-6">
+    <div className="w-full py-8">
       <div className="w-full bg-white rounded-3xl shadow-sm border border-gray-600 py-12 px-8 text-center">
         <h1 className="text-7xl font-serif mb-3 leading-tight">
           Your creativity,

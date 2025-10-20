@@ -8,8 +8,8 @@ export default function Home() {
       <PrizePoolBanner />
       <div className='px-8 py-2'>
         <NavigationBar />
+        <CreativityHero />
       </div>
-      <CreativityHero/>
     </div>
   );
 }
