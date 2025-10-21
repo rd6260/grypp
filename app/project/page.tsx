@@ -1,8 +1,27 @@
 'use client';
 
-import NavigationBar from '@/components/GryppBar';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { 
+  ArrowLeft, 
+  Calendar, 
+  Eye, 
+  Users, 
+  CheckCircle2, 
+  XCircle,
+  Target,
+  FileVideo,
+  Scale,
+  Award,
+  DollarSign,
+  TrendingUp,
+  Tag,
+  FolderOpen,
+  Send
+} from 'lucide-react';
+
+import NavigationBar from '@/components/GryppBar';
+
 
 function ProjectDetailsContent() {
   const searchParams = useSearchParams();
@@ -35,6 +54,7 @@ function ProjectDetailsContent() {
       <div className="min-h-screen bg-black p-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-zinc-900 rounded-lg shadow p-8 text-center">
+            <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
             <h1 className="text-2xl font-medium text-white mb-4">No Project ID</h1>
             <p className="text-gray-400">Please provide a project ID in the URL: ?projectid=PROJECTID</p>
           </div>
@@ -48,13 +68,14 @@ function ProjectDetailsContent() {
   return (
     <div className="min-h-screen bg-[#0b0b0b]">
       <div className='px-4 py-2'>
-        <NavigationBar />
+        <NavigationBar/>
       </div>
       {/* Main Content */}
       <main className="max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <button className="text-gray-400 hover:text-white flex items-center gap-2">
-            <span>←</span> Back to bounties
+          <button className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to bounties</span>
           </button>
         </div>
 
@@ -64,14 +85,16 @@ function ProjectDetailsContent() {
             {/* Status Tags */}
             <div className="bg-[#171719] p-6 rounded-lg">
               <div className="flex gap-2 flex-wrap mb-4">
-                <span className={`px-3 py-1 rounded-full text-sm ${isOpen
+                <span className={`px-3 py-1 rounded-full text-sm flex items-center gap-1.5 ${isOpen
                   ? 'bg-green-500/20 text-green-400'
                   : 'bg-red-500/20 text-red-400'
                   }`}>
+                  {isOpen ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
                   {isOpen ? 'Open' : 'Closed'}
                 </span>
                 {project.contentTypeTags.map((tag, idx) => (
-                  <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm">
+                  <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5" />
                     {tag}
                   </span>
                 ))}
@@ -97,21 +120,33 @@ function ProjectDetailsContent() {
               {/* Stats */}
               <div className="grid grid-cols-4 gap-4">
                 <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                  <div className="text-gray-400 text-sm mb-[-5]">Entries</div>
+                  <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                    <Users className="w-4 h-4" />
+                    Entries
+                  </div>
                   <div className="text-lg font-medium text-white">{project.entries}</div>
                 </div>
                 <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                  <div className="text-gray-400 text-sm mb-[-5]">Views</div>
+                  <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                    <Eye className="w-4 h-4" />
+                    Views
+                  </div>
                   <div className="text-lg font-medium text-white">{project.views}</div>
                 </div>
                 <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                  <div className="text-gray-400 text-sm mb-[-5]">Status</div>
+                  <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                    {isOpen ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                    Status
+                  </div>
                   <div className={`text-lg font-medium ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
                     {isOpen ? 'Accepting' : 'Closed'}
                   </div>
                 </div>
                 <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                  <div className="text-gray-400 text-sm mb-[-5]">Deadline</div>
+                  <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" />
+                    Deadline
+                  </div>
                   <div className="text-lg font-medium text-white">{project.deadline}</div>
                 </div>
               </div>
@@ -119,17 +154,26 @@ function ProjectDetailsContent() {
 
 
             {/* Overview */}
-            <div className=" rounded-lg p-6 shadow-sm border border-zinc-800">
-              <h2 className="text-xl font-medium mb-4 text-white">Description</h2>
+            <div className="rounded-lg p-6 shadow-sm border border-zinc-800">
+              <h2 className="text-xl font-medium mb-4 text-white flex items-center gap-2">
+                <FileVideo className="w-5 h-5" />
+                Description
+              </h2>
 
               <div className="space-y-4">
                 <div>
-                  <div className="text-sm font-medium text-gray-400 mb-2">Objective</div>
+                  <div className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+                    <Target className="w-4 h-4" />
+                    Objective
+                  </div>
                   <div className="text-gray-200">{project.objective}</div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-gray-400 mb-2">Source Material</div>
+                  <div className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+                    <FolderOpen className="w-4 h-4" />
+                    Source Material
+                  </div>
                   <div className="flex gap-2">
                     {project.sourceMaterial.map((source, idx) => (
                       <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded text-sm">
@@ -140,17 +184,26 @@ function ProjectDetailsContent() {
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-gray-400 mb-2">Clip Specs</div>
+                  <div className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+                    <FileVideo className="w-4 h-4" />
+                    Clip Specs
+                  </div>
                   <div className="text-gray-200">{project.clipSpecs}</div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-gray-400 mb-2">Licensing</div>
+                  <div className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+                    <Scale className="w-4 h-4" />
+                    Licensing
+                  </div>
                   <div className="text-gray-200">{project.licensing}</div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-gray-400 mb-2">Judging</div>
+                  <div className="text-sm font-medium text-gray-400 mb-2 flex items-center gap-1.5">
+                    <Award className="w-4 h-4" />
+                    Judging
+                  </div>
                   <div className="text-gray-200">{project.judging}</div>
                 </div>
               </div>
@@ -160,28 +213,43 @@ function ProjectDetailsContent() {
           {/* Right Column - Submission Form */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-[#171719] rounded-lg p-6 border border-zinc-800">
-              <h3 className="text-xl font-medium text-white">Submit Your Entry</h3>
+              <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                <Send className="w-5 h-5" />
+                Submit Your Entry
+              </h3>
 
               {/* Budget Info */}
               <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800 mt-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-gray-400 text-sm mb-[-5]">Total Budget</div>
+                    <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4" />
+                      Total Budget
+                    </div>
                     <div className="text-lg font-medium">{project.totalBudget}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-[-5]">Minimum Views</div>
+                    <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                      <Eye className="w-4 h-4" />
+                      Minimum Views
+                    </div>
                     <div className="text-lg font-medium">{project.minViews}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-[-5]">Pay Per 1K Views</div>
+                    <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                      <TrendingUp className="w-4 h-4" />
+                      Pay Per 1K Views
+                    </div>
                     <div className="text-lg font-medium">{project.payPerView}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-[-5]">Max Payout Per Video</div>
+                    <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                      <Award className="w-4 h-4" />
+                      Max Payout Per Video
+                    </div>
                     <div className="text-lg font-medium">{project.maxPayout}</div>
                   </div>
                 </div>
@@ -192,7 +260,8 @@ function ProjectDetailsContent() {
                 <div>
                   <div className="flex gap-2 flex-wrap">
                     {project.contentTypeTags.map((tag, idx) => (
-                      <span key={idx} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                      <span key={idx} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-1.5">
+                        <Tag className="w-3.5 h-3.5" />
                         {tag}
                       </span>
                     ))}
@@ -202,7 +271,8 @@ function ProjectDetailsContent() {
                 <div>
                   <div className="flex gap-2 flex-wrap">
                     {project.categoryTags.map((tag, idx) => (
-                      <span key={idx} className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">
+                      <span key={idx} className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm flex items-center gap-1.5">
+                        <Tag className="w-3.5 h-3.5" />
                         {tag}
                       </span>
                     ))}
@@ -212,7 +282,8 @@ function ProjectDetailsContent() {
 
               {/* Submit Button at Bottom */}
               <div className='bg-[#0b0b0b] p-3 rounded-lg mt-6'>
-                <button className="w-full py-2 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)]">
+                <button className="w-full py-2 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2">
+                  <Send className="w-4 h-4" />
                   Submit Entry
                 </button>
               </div>
@@ -220,7 +291,10 @@ function ProjectDetailsContent() {
 
             {/* Resources Section */}
             <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800">
-              <h4 className="text-base font-medium mb-3">Resources</h4>
+              <h4 className="text-base font-medium mb-3 flex items-center gap-2">
+                <FolderOpen className="w-4 h-4" />
+                Resources
+              </h4>
               <p className="text-sm text-gray-400 mb-4">
                 Access brand assets, guidelines, and reference materials
               </p>
@@ -232,8 +306,6 @@ function ProjectDetailsContent() {
               </button>
             </div>
           </div>
-
-
         </div>
       </main>
     </div>
