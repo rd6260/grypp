@@ -1,5 +1,6 @@
 'use client';
 
+import NavigationBar from '@/components/GryppBar';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -17,7 +18,7 @@ function ProjectDetailsContent() {
     views: '12.4k',
     deadline: 'Nov 30, 2025',
     totalBudget: '850 USDC',
-    minViews: '1K',
+    minViews: '1000',
     payPerView: '$3',
     maxPayout: '$100',
     objective: 'Identify 3-5 high-impact clips (30-60s) per talk that showcase breakthroughs, quotable insights, or moments with strong audience reaction.',
@@ -34,7 +35,7 @@ function ProjectDetailsContent() {
       <div className="min-h-screen bg-black p-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-zinc-900 rounded-lg shadow p-8 text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">No Project ID</h1>
+            <h1 className="text-2xl font-medium text-white mb-4">No Project ID</h1>
             <p className="text-gray-400">Please provide a project ID in the URL: ?projectid=PROJECTID</p>
           </div>
         </div>
@@ -46,6 +47,9 @@ function ProjectDetailsContent() {
 
   return (
     <div className="min-h-screen bg-[#0b0b0b]">
+      <div className='px-4 py-2'>
+        <NavigationBar />
+      </div>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -59,11 +63,10 @@ function ProjectDetailsContent() {
           <div className="lg:col-span-2 space-y-6">
             {/* Status Tags */}
             <div className="flex gap-2 flex-wrap">
-              <span className={`px-3 py-1 rounded-full text-sm ${
-                isOpen 
-                  ? 'bg-green-500/20 text-green-400' 
-                  : 'bg-red-500/20 text-red-400'
-              }`}>
+              <span className={`px-3 py-1 rounded-full text-sm ${isOpen
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-red-500/20 text-red-400'
+                }`}>
                 {isOpen ? 'Open' : 'Closed'}
               </span>
               {project.contentTypeTags.map((tag, idx) => (
@@ -75,7 +78,7 @@ function ProjectDetailsContent() {
 
             {/* Title */}
             <div>
-              <h1 className="text-3xl font-bold text-white mb-4">{project.title}</h1>
+              <h1 className="text-3xl font-medium text-white mb-4">{project.title}</h1>
               <p className="text-gray-400">{project.description}</p>
             </div>
 
@@ -93,28 +96,28 @@ function ProjectDetailsContent() {
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-500 text-sm mb-1">Entries</div>
-                <div className="text-2xl font-bold text-white">{project.entries}</div>
+                <div className="text-gray-400 text-sm mb-1">Entries</div>
+                <div className="text-2xl font-medium text-white">{project.entries}</div>
               </div>
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-500 text-sm mb-1">Views</div>
-                <div className="text-2xl font-bold text-white">{project.views}</div>
+                <div className="text-gray-400 text-sm mb-1">Views</div>
+                <div className="text-2xl font-medium text-white">{project.views}</div>
               </div>
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-500 text-sm mb-1">Status</div>
-                <div className={`text-lg font-semibold ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
+                <div className="text-gray-400 text-sm mb-1">Status</div>
+                <div className={`text-lg font-normal ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
                   {isOpen ? 'Accepting' : 'Closed'}
                 </div>
               </div>
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-500 text-sm mb-1">Deadline</div>
-                <div className="text-lg font-semibold text-white">{project.deadline}</div>
+                <div className="text-gray-400 text-sm mb-1">Deadline</div>
+                <div className="text-lg font-normal text-white">{project.deadline}</div>
               </div>
             </div>
 
             {/* Overview */}
             <div className=" rounded-lg p-6 shadow-sm border border-zinc-800">
-              <h2 className="text-xl font-bold mb-4 text-white">Description</h2>
+              <h2 className="text-xl font-medium mb-4 text-white">Description</h2>
 
               <div className="space-y-4">
                 <div>
@@ -153,43 +156,30 @@ function ProjectDetailsContent() {
 
           {/* Right Column - Submission Form */}
           <div className="lg:col-span-1">
-            <div className="rounded-lg p-6 shadow-sm sticky top-8 space-y-6 border border-zinc-800">
-              <h3 className="text-xl font-bold text-white">Submit Your Entry</h3>
-              <button className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors">
-                Submit Entry
-              </button>
-
-              <div className="text-center">
-                <button className="text-orange-500 hover:underline text-sm">Read full rules</button>
-              </div>
+            <div className="bg-[#171719] rounded-lg p-6 top-8 space-y-6 border border-zinc-800">
+              <h3 className="text-xl font-medium text-white">Submit Your Entry</h3>
 
               {/* Budget Info */}
-              <div className="bg-black rounded-lg p-6 text-white space-y-4 border border-zinc-800">
-                <div>
-                  <div className="text-gray-500 text-sm mb-1">TOTAL BUDGET</div>
-                  <div className="text-2xl font-bold">{project.totalBudget}</div>
-                </div>
+              <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-gray-400 text-sm mb-1">Total Budget</div>
+                    <div className="text-lg font-medium">{project.totalBudget}</div>
+                  </div>
 
-                <div>
-                  <div className="text-gray-500 text-sm mb-1">MINIMUM VIEWS</div>
-                  <div className="text-xl font-semibold">{project.minViews}</div>
-                </div>
+                  <div>
+                    <div className="text-gray-400 text-sm mb-1">Minimum Views</div>
+                    <div className="text-lg font-medium">{project.minViews}</div>
+                  </div>
 
-                <div>
-                  <div className="text-gray-500 text-sm mb-1">PAY PER 1K VIEWS</div>
-                  <div className="text-xl font-semibold">{project.payPerView}</div>
-                </div>
+                  <div>
+                    <div className="text-gray-400 text-sm mb-1">Pay Per 1K Views</div>
+                    <div className="text-lg font-medium">{project.payPerView}</div>
+                  </div>
 
-                <div>
-                  <div className="text-gray-500 text-sm mb-1">MAX PAYOUT PER VIDEO</div>
-                  <div className="text-xl font-semibold">{project.maxPayout}</div>
-                </div>
-
-                <div className="pt-4 border-t border-zinc-800">
-                  <div className="text-gray-500 text-sm mb-2">Payment Token</div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">USDC</span>
-                    <span className="text-green-400">✓ Verified</span>
+                  <div>
+                    <div className="text-gray-400 text-sm mb-1">Max Payout Per Video</div>
+                    <div className="text-lg font-medium">{project.maxPayout}</div>
                   </div>
                 </div>
               </div>
@@ -216,8 +206,17 @@ function ProjectDetailsContent() {
                   </div>
                 </div>
               </div>
+
+              {/* Submit Button at Bottom */}
+              <div className='bg-[#0b0b0b] p-3 rounded-lg'>
+                <button className="w-full py-2 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)]">
+                  Submit Entry
+                </button>
+              </div>
             </div>
           </div>
+
+
         </div>
       </main>
     </div>
