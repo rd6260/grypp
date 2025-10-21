@@ -50,7 +50,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
           <p className="text-gray-500 text-sm">{description}</p>
         </div>
         <button 
-          className={`ml-4 px-6 py-2 rounded-full text-sm font-medium ${
+          className={`ml-4 px-6 py-2 rounded-lg text-sm font-medium ${
             status === 'open' 
               ? 'bg-indigo-100 text-indigo-600' 
               : 'bg-gray-100 text-gray-600'
@@ -60,7 +60,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
         </button>
       </div>
 
-      <div className="relative w-full h-32 mb-4 rounded-2xl overflow-hidden bg-gray-200">
+      <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden bg-gray-200">
         <img 
           src={imageUrl} 
           alt={title}
@@ -95,7 +95,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3 mb-6 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+      <div className="grid grid-cols-4 gap-3 mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
         <div className="text-center">
           <p className="text-xs text-gray-500 mb-1">Entries</p>
           <p className="text-xl font-bold text-gray-900">{entries}</p>
@@ -115,11 +115,11 @@ const BountyCard: React.FC<BountyCardProps> = ({
       </div>
 
       <div className="flex gap-3">
-        <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+        <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
           <Eye className="w-5 h-5" />
           View Details
         </button>
-        <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 rounded-full text-white font-medium hover:bg-indigo-700 transition-colors">
+        <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 rounded-lg text-white font-medium hover:bg-indigo-700 transition-colors">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>

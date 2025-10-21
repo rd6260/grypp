@@ -9,7 +9,7 @@ export default function CreativityHero() {
         </h1>
         
         <div className="flex items-center justify-center gap-4 mt-6 mb-4">
-          <button className="bg-black text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 transition-colors">
+          <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
             EXPLORE BOUNTIES
           </button>
           
