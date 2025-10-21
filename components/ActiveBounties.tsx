@@ -43,10 +43,10 @@ const BountyCard: React.FC<BountyCardProps> = ({
   };
 
   return (
-    <div className="w-full bg-white rounded-3xl shadow-lg p-6 font-sans">
+    <div className="w-full bg-white rounded-lg border border-gray-200  p-6 font-sans">
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">{title}</h2>
           <p className="text-gray-500 text-sm">{description}</p>
         </div>
         <button 
@@ -257,11 +257,10 @@ interface ActiveBountiesProps {
 
 const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
+      <div className="max-w-[1700px] mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Active Bounties</h1>
-          <p className="text-gray-600">Discover and participate in exciting content bounties</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Active Bounties</h1>
         </div>
         
         <div 
