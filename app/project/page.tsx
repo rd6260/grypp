@@ -12,7 +12,7 @@ function ProjectDetailsContent() {
     id: projectId,
     title: 'Clip highlight moments from AI talks',
     description: 'Find 30-60s highlight segments from the latest AI conference videos. Focus on clear insights, novel ideas, and audience reactions.',
-    status: 'Accepting',
+    status: 1, // 0 = closed, 1 = open
     entries: 128,
     views: '12.4k',
     deadline: 'Nov 30, 2025',
@@ -25,8 +25,8 @@ function ProjectDetailsContent() {
     clipSpecs: 'Resolution 1080p+, aspect 9:16 or 1:1, hard captions, subtle waveform, clean cut-in/out.',
     licensing: 'Fair use commentary. Attribute original speaker and event in overlay.',
     judging: 'Relevance, clarity, share-worthiness, watch-through rate.',
-    contentTypeTags: ['Clipping'],
-    categoryTags: ['AI', 'Stream'],
+    contentTypeTags: ['Clipping', 'Editing'],
+    categoryTags: ['AI', 'Stream', 'Tech'],
   };
 
   if (!projectId) {
@@ -42,6 +42,8 @@ function ProjectDetailsContent() {
     );
   }
 
+  const isOpen = project.status === 1;
+
   return (
     <div className="min-h-screen bg-[#0b0b0b]">
       {/* Main Content */}
@@ -56,9 +58,19 @@ function ProjectDetailsContent() {
           {/* Left Column - Project Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Status Tags */}
-            <div className="flex gap-2">
-              <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">Open</span>
-              <span className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm">Clipping</span>
+            <div className="flex gap-2 flex-wrap">
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                isOpen 
+                  ? 'bg-green-500/20 text-green-400' 
+                  : 'bg-red-500/20 text-red-400'
+              }`}>
+                {isOpen ? 'Open' : 'Closed'}
+              </span>
+              {project.contentTypeTags.map((tag, idx) => (
+                <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm">
+                  {tag}
+                </span>
+              ))}
             </div>
 
             {/* Title */}
@@ -90,7 +102,9 @@ function ProjectDetailsContent() {
               </div>
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Status</div>
-                <div className="text-lg font-semibold text-green-400">{project.status}</div>
+                <div className={`text-lg font-semibold ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
+                  {isOpen ? 'Accepting' : 'Closed'}
+                </div>
               </div>
               <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Deadline</div>
@@ -176,6 +190,29 @@ function ProjectDetailsContent() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">USDC</span>
                     <span className="text-green-400">✓ Verified</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tags Section */}
+              <div className="space-y-4">
+                <div>
+                  <div className="flex gap-2 flex-wrap">
+                    {project.contentTypeTags.map((tag, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex gap-2 flex-wrap">
+                    {project.categoryTags.map((tag, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
