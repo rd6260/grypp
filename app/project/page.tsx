@@ -51,7 +51,7 @@ function ProjectDetailsContent() {
         <NavigationBar />
       </div>
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <button className="text-gray-400 hover:text-white flex items-center gap-2">
             <span>←</span> Back to bounties
@@ -62,58 +62,61 @@ function ProjectDetailsContent() {
           {/* Left Column - Project Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Status Tags */}
-            <div className="flex gap-2 flex-wrap">
-              <span className={`px-3 py-1 rounded-full text-sm ${isOpen
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-red-500/20 text-red-400'
-                }`}>
-                {isOpen ? 'Open' : 'Closed'}
-              </span>
-              {project.contentTypeTags.map((tag, idx) => (
-                <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm">
-                  {tag}
+            <div className="bg-[#171719] p-6 rounded-lg">
+              <div className="flex gap-2 flex-wrap mb-4">
+                <span className={`px-3 py-1 rounded-full text-sm ${isOpen
+                  ? 'bg-green-500/20 text-green-400'
+                  : 'bg-red-500/20 text-red-400'
+                  }`}>
+                  {isOpen ? 'Open' : 'Closed'}
                 </span>
-              ))}
-            </div>
-
-            {/* Title */}
-            <div>
-              <h1 className="text-3xl font-medium text-white mb-4">{project.title}</h1>
-              <p className="text-gray-400">{project.description}</p>
-            </div>
-
-            {/* Banner Image */}
-            <div className="rounded-lg overflow-hidden shadow-lg">
-              <div className="aspect-video w-full h-64">
-                <img
-                  src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=400&fit=crop"
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                />
+                {project.contentTypeTags.map((tag, idx) => (
+                  <span key={idx} className="px-3 py-1 bg-zinc-800 text-gray-300 rounded-full text-sm">
+                    {tag}
+                  </span>
+                ))}
               </div>
-            </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4">
-              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-400 text-sm mb-1">Entries</div>
-                <div className="text-2xl font-medium text-white">{project.entries}</div>
+              {/* Title */}
+              <div>
+                <h1 className="text-3xl font-medium text-white mb-1">{project.title}</h1>
+                <p className="text-gray-400 mb-2">{project.description}</p>
               </div>
-              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-400 text-sm mb-1">Views</div>
-                <div className="text-2xl font-medium text-white">{project.views}</div>
-              </div>
-              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-400 text-sm mb-1">Status</div>
-                <div className={`text-lg font-normal ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
-                  {isOpen ? 'Accepting' : 'Closed'}
+
+              {/* Banner Image */}
+              <div className="rounded-lg overflow-hidden shadow-lg mb-4">
+                <div className="aspect-video w-full h-64">
+                  <img
+                    src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=400&fit=crop"
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
-              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
-                <div className="text-gray-400 text-sm mb-1">Deadline</div>
-                <div className="text-lg font-normal text-white">{project.deadline}</div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-4 gap-4">
+                <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
+                  <div className="text-gray-400 text-sm mb-[-5]">Entries</div>
+                  <div className="text-lg font-medium text-white">{project.entries}</div>
+                </div>
+                <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
+                  <div className="text-gray-400 text-sm mb-[-5]">Views</div>
+                  <div className="text-lg font-medium text-white">{project.views}</div>
+                </div>
+                <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
+                  <div className="text-gray-400 text-sm mb-[-5]">Status</div>
+                  <div className={`text-lg font-medium ${isOpen ? 'text-green-400' : 'text-red-400'}`}>
+                    {isOpen ? 'Accepting' : 'Closed'}
+                  </div>
+                </div>
+                <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
+                  <div className="text-gray-400 text-sm mb-[-5]">Deadline</div>
+                  <div className="text-lg font-medium text-white">{project.deadline}</div>
+                </div>
               </div>
             </div>
+
 
             {/* Overview */}
             <div className=" rounded-lg p-6 shadow-sm border border-zinc-800">
@@ -155,37 +158,37 @@ function ProjectDetailsContent() {
           </div>
 
           {/* Right Column - Submission Form */}
-          <div className="lg:col-span-1">
-            <div className="bg-[#171719] rounded-lg p-6 top-8 space-y-6 border border-zinc-800">
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-[#171719] rounded-lg p-6 border border-zinc-800">
               <h3 className="text-xl font-medium text-white">Submit Your Entry</h3>
 
               {/* Budget Info */}
-              <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800">
+              <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800 mt-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-gray-400 text-sm mb-1">Total Budget</div>
+                    <div className="text-gray-400 text-sm mb-[-5]">Total Budget</div>
                     <div className="text-lg font-medium">{project.totalBudget}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-1">Minimum Views</div>
+                    <div className="text-gray-400 text-sm mb-[-5]">Minimum Views</div>
                     <div className="text-lg font-medium">{project.minViews}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-1">Pay Per 1K Views</div>
+                    <div className="text-gray-400 text-sm mb-[-5]">Pay Per 1K Views</div>
                     <div className="text-lg font-medium">{project.payPerView}</div>
                   </div>
 
                   <div>
-                    <div className="text-gray-400 text-sm mb-1">Max Payout Per Video</div>
+                    <div className="text-gray-400 text-sm mb-[-5]">Max Payout Per Video</div>
                     <div className="text-lg font-medium">{project.maxPayout}</div>
                   </div>
                 </div>
               </div>
 
               {/* Tags Section */}
-              <div className="space-y-4">
+              <div className="space-y-4 mt-6">
                 <div>
                   <div className="flex gap-2 flex-wrap">
                     {project.contentTypeTags.map((tag, idx) => (
@@ -208,11 +211,25 @@ function ProjectDetailsContent() {
               </div>
 
               {/* Submit Button at Bottom */}
-              <div className='bg-[#0b0b0b] p-3 rounded-lg'>
+              <div className='bg-[#0b0b0b] p-3 rounded-lg mt-6'>
                 <button className="w-full py-2 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)]">
                   Submit Entry
                 </button>
               </div>
+            </div>
+
+            {/* Resources Section */}
+            <div className="bg-[#171719] rounded-lg p-4 text-white border border-zinc-800">
+              <h4 className="text-base font-medium mb-3">Resources</h4>
+              <p className="text-sm text-gray-400 mb-4">
+                Access brand assets, guidelines, and reference materials
+              </p>
+              <button className="w-full py-2 bg-zinc-800 text-white font-medium rounded-lg hover:bg-zinc-700 transition-all border border-zinc-700 flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Open Resources
+              </button>
             </div>
           </div>
 
