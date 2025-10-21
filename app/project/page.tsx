@@ -43,7 +43,7 @@ function ProjectDetailsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#0b0b0b]">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -80,26 +80,26 @@ function ProjectDetailsContent() {
 
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
-              <div className="bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-800">
+              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Entries</div>
                 <div className="text-2xl font-bold text-white">{project.entries}</div>
               </div>
-              <div className="bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-800">
+              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Views</div>
                 <div className="text-2xl font-bold text-white">{project.views}</div>
               </div>
-              <div className="bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-800">
+              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Status</div>
                 <div className="text-lg font-semibold text-green-400">{project.status}</div>
               </div>
-              <div className="bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-800">
+              <div className="rounded-lg p-4 shadow-sm border border-zinc-800">
                 <div className="text-gray-500 text-sm mb-1">Deadline</div>
                 <div className="text-lg font-semibold text-white">{project.deadline}</div>
               </div>
             </div>
 
             {/* Overview */}
-            <div className="bg-zinc-900 rounded-lg p-6 shadow-sm border border-zinc-800">
+            <div className=" rounded-lg p-6 shadow-sm border border-zinc-800">
               <h2 className="text-xl font-bold mb-4 text-white">Description</h2>
 
               <div className="space-y-4">
@@ -139,10 +139,10 @@ function ProjectDetailsContent() {
 
           {/* Right Column - Submission Form */}
           <div className="lg:col-span-1">
-            <div className="bg-zinc-900 rounded-lg p-6 shadow-sm sticky top-8 space-y-6 border border-zinc-800">
+            <div className="rounded-lg p-6 shadow-sm sticky top-8 space-y-6 border border-zinc-800">
               <h3 className="text-xl font-bold text-white">Submit Your Entry</h3>
               <button className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors">
-                SUBMIT ENTRY
+                Submit Entry
               </button>
 
               <div className="text-center">
