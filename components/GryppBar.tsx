@@ -38,11 +38,12 @@ export default function NavigationBar() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2 text-sm font-medium border border-gray-900 rounded-lg hover:bg-gray-900 hover:text-white transition-colors">
-            BECOME A SPONSOR
-          </button>
-          
-          {ready && authenticated ? (
+          {/* Only show buttons when ready */}
+          {!ready ? (
+            // Optional: Show a loading state or placeholder
+            <div className="h-10 w-32 animate-pulse bg-gray-200 rounded-lg" />
+          ) : authenticated ? (
+            // User is logged in - only show profile button
             <button 
               onClick={handleProfileClick}
               className="px-5 py-2 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
@@ -63,24 +64,30 @@ export default function NavigationBar() {
               </svg>
             </button>
           ) : (
-            <button 
-              onClick={handleLoginClick}
-              className="px-5 py-2 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
-            >
-              LOG IN
-              <svg 
-                width="14" 
-                height="14" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5"
-                strokeLinecap="round" 
-                strokeLinejoin="round"
+            // User is not logged in - show both sponsor and login buttons
+            <>
+              <button className="px-5 py-2 text-sm font-medium border border-gray-900 rounded-lg hover:bg-gray-900 hover:text-white transition-colors">
+                BECOME A SPONSOR
+              </button>
+              <button 
+                onClick={handleLoginClick}
+                className="px-5 py-2 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
               >
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </button>
+                LOG IN
+                <svg 
+                  width="14" 
+                  height="14" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2.5"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </>
           )}
         </div>
       </div>

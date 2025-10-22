@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Upload, X, Check, Info, Send, Instagram, Youtube, MapPin, User, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Upload, X, Check, Info, Send, Instagram, Youtube, MapPin, User, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { usePrivy } from '@privy-io/react-auth';
 
 interface Skill {
   id: string;
@@ -18,24 +20,148 @@ const AVAILABLE_SKILLS: Skill[] = [
 ];
 
 const ProfileSetup: React.FC = () => {
+  const { user, ready } = usePrivy();
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    username: 'black-contemporary-87',
+    username: '',
     location: '',
     twitter: '',
     instagram: '',
     youtube: '',
     tiktok: '',
-    referralCode: '',
   });
   
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [existingProfile, setExistingProfile] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState('');
+
+  const supabase = createClient();
+
+  // Load existing profile data when component mounts
+  useEffect(() => {
+    const loadExistingProfile = async () => {
+      if (!ready || !user?.id) {
+        setIsLoadingProfile(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          // PGRST116 means no rows returned (no existing profile)
+          console.error('Error loading profile:', error);
+          setIsLoadingProfile(false);
+          return;
+        }
+
+        if (data) {
+          // Profile exists - populate form with existing data
+          setExistingProfile(true);
+          setOriginalUsername(data.username || '');
+          setFormData({
+            firstName: data.first_name || '',
+            lastName: data.last_name || '',
+            username: data.username || '',
+            location: data.region || '',
+            twitter: data.x || '',
+            instagram: data.instagram || '',
+            youtube: data.youtube || '',
+            tiktok: data.tiktok || '',
+          });
+          setSelectedSkills(data.interests || []);
+          setIsUsernameAvailable(true);
+
+          // Load existing profile picture if it exists
+          if (data.pfp_url) {
+            setProfileImage(data.pfp_url);
+          } else {
+            // Try to load from storage bucket
+            const { data: urlData } = supabase.storage
+              .from('pfp')
+              .getPublicUrl(user.id);
+            
+            if (urlData?.publicUrl) {
+              setProfileImage(urlData.publicUrl);
+            }
+          }
+        } else {
+          // No profile exists - generate default username
+          setFormData(prev => ({
+            ...prev,
+            username: `user-${user.id.slice(0, 8)}`,
+          }));
+        }
+      } catch (err) {
+        console.error('Unexpected error loading profile:', err);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    loadExistingProfile();
+  }, [user?.id, ready]);
+
+  // Check username availability with debounce
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!user?.id || formData.username.length < 3) {
+        setIsUsernameAvailable(null);
+        return;
+      }
+
+      // If username hasn't changed from original, it's available
+      if (existingProfile && formData.username === originalUsername) {
+        setIsUsernameAvailable(true);
+        return;
+      }
+
+      setIsCheckingUsername(true);
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('username')
+          .eq('username', formData.username)
+          .single();
+
+        if (error && error.code === 'PGRST116') {
+          // No rows returned - username is available
+          setIsUsernameAvailable(true);
+        } else if (data) {
+          // Username exists
+          setIsUsernameAvailable(false);
+        }
+      } catch (err) {
+        console.error('Error checking username:', err);
+      } finally {
+        setIsCheckingUsername(false);
+      }
+    };
+
+    const timeoutId = setTimeout(checkUsername, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.username, user?.id, existingProfile, originalUsername]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const toggleSkill = (skillId: string) => {
@@ -44,23 +170,216 @@ const ProfileSetup: React.FC = () => {
         ? prev.filter(id => id !== skillId)
         : [...prev, skillId]
     );
+    if (errors.skills) {
+      setErrors(prev => ({ ...prev, skills: '' }));
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setErrors(prev => ({ ...prev, profileImage: 'Please upload an image file' }));
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, profileImage: 'Image size must be less than 5MB' }));
+        return;
+      }
+
+      setProfileImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+      
+      // Clear error
+      if (errors.profileImage) {
+        setErrors(prev => ({ ...prev, profileImage: '' }));
+      }
     }
   };
 
-  const handleSubmit = () => {
-    console.log({ ...formData, skills: selectedSkills, profileImage });
-    alert('Profile created successfully!');
+  const uploadProfilePicture = async (userId: string): Promise<string | null> => {
+    if (!profileImageFile) {
+      return null;
+    }
+
+    try {
+      // Delete existing profile picture if it exists
+      const { error: deleteError } = await supabase.storage
+        .from('pfp')
+        .remove([userId]);
+
+      if (deleteError && deleteError.message !== 'Object not found') {
+        console.error('Error deleting old profile picture:', deleteError);
+      }
+
+      // Upload new profile picture with user ID as filename
+      const { error: uploadError } = await supabase.storage
+        .from('pfp')
+        .upload(userId, profileImageFile, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('Error uploading profile picture:', uploadError);
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('pfp')
+        .getPublicUrl(userId);
+
+      return urlData.publicUrl;
+    } catch (err) {
+      console.error('Error in uploadProfilePicture:', err);
+      throw err;
+    }
   };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+
+    if (!formData.username.trim() || formData.username.length < 3) {
+      newErrors.username = 'Username must be at least 3 characters';
+    } else if (!isUsernameAvailable) {
+      newErrors.username = 'Username is already taken';
+    }
+
+    if (!formData.location) {
+      newErrors.location = 'Location is required';
+    }
+
+    if (selectedSkills.length === 0) {
+      newErrors.skills = 'Please select at least one interest';
+    }
+
+    // Check if at least one social media is provided
+    const hasSocial = formData.twitter || formData.instagram || formData.youtube || formData.tiktok;
+    if (!hasSocial) {
+      newErrors.socials = 'At least one social media link is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!user?.id) {
+      alert('You must be logged in to create a profile');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload profile picture if a new one was selected
+      let pfpUrl = null;
+      if (profileImageFile) {
+        pfpUrl = await uploadProfilePicture(user.id);
+      }
+
+      const profileData = {
+        id: user.id,
+        username: formData.username,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        region: formData.location,
+        interests: selectedSkills,
+        x: formData.twitter || null,
+        instagram: formData.instagram || null,
+        youtube: formData.youtube || null,
+        tiktok: formData.tiktok || null,
+        ...(pfpUrl && { pfp_url: pfpUrl })
+      };
+
+      let result;
+      
+      if (existingProfile) {
+        // Update existing profile
+        result = await supabase
+          .from('users')
+          .update(profileData)
+          .eq('id', user.id)
+          .select();
+      } else {
+        // Insert new profile
+        result = await supabase
+          .from('users')
+          .insert([profileData])
+          .select();
+      }
+
+      const { data, error } = result;
+
+      if (error) {
+        console.error('Error saving profile:', error);
+        if (error.code === '23505') {
+          // Unique constraint violation
+          setErrors({ username: 'Username is already taken' });
+        } else {
+          alert(`Error saving profile: ${error.message}`);
+        }
+        return;
+      }
+
+      console.log('Profile saved:', data);
+      alert(existingProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
+      
+      // TODO: Redirect to dashboard or next step
+      // window.location.href = '/dashboard';
+      
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Show loading state while checking authentication and loading profile
+  if (!ready || isLoadingProfile) {
+    return (
+      <div className="min-h-screen bg-black text-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#ff7a66] animate-spin mx-auto mb-4" />
+          <p className="text-gray-400 text-lg">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if user is not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black text-gray-100 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-16 h-16 text-[#ff7a66] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Authentication Required</h2>
+          <p className="text-gray-400">Please log in to set up your profile.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-gray-100 p-6 flex items-center justify-center">
@@ -68,10 +387,12 @@ const ProfileSetup: React.FC = () => {
         <div className="mb-10">
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight flex items-center gap-3">
             <Sparkles className="w-10 h-10 text-[#ff7a66]" />
-            Setup Your Profile
+            {existingProfile ? 'Update Your Profile' : 'Setup Your Profile'}
           </h1>
           <p className="text-gray-400 text-xl">
-            It takes less than a minute to start earning in global standards.
+            {existingProfile 
+              ? 'Make changes to your profile information below.'
+              : 'It takes less than a minute to start earning in global standards.'}
           </p>
         </div>
 
@@ -96,6 +417,12 @@ const ProfileSetup: React.FC = () => {
                 onChange={handleImageUpload}
                 className="hidden"
               />
+              {errors.profileImage && (
+                <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.profileImage}
+                </p>
+              )}
             </div>
 
             {/* Name Fields */}
@@ -111,8 +438,16 @@ const ProfileSetup: React.FC = () => {
                   value={formData.firstName}
                   onChange={handleInputChange}
                   placeholder="First Name"
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600"
+                  className={`w-full px-4 py-3 bg-zinc-900 border ${
+                    errors.firstName ? 'border-red-500' : 'border-zinc-800'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
@@ -125,8 +460,16 @@ const ProfileSetup: React.FC = () => {
                   value={formData.lastName}
                   onChange={handleInputChange}
                   placeholder="Last Name"
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600"
+                  className={`w-full px-4 py-3 bg-zinc-900 border ${
+                    errors.lastName ? 'border-red-500' : 'border-zinc-800'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.lastName}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -144,10 +487,26 @@ const ProfileSetup: React.FC = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white"
+                  className={`w-full pl-10 pr-12 py-3 bg-zinc-900 border ${
+                    errors.username ? 'border-red-500' : 'border-zinc-800'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white`}
                 />
-                <Check className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  {isCheckingUsername ? (
+                    <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+                  ) : isUsernameAvailable === true ? (
+                    <Check className="w-5 h-5 text-green-500" />
+                  ) : isUsernameAvailable === false ? (
+                    <X className="w-5 h-5 text-red-500" />
+                  ) : null}
+                </div>
               </div>
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.username}
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
@@ -158,7 +517,9 @@ const ProfileSetup: React.FC = () => {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white appearance-none cursor-pointer"
+                className={`w-full px-4 py-3 bg-zinc-900 border ${
+                  errors.location ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white appearance-none cursor-pointer`}
               >
                 <option value="">Select a region...</option>
                 <option value="north-america">North America</option>
@@ -168,6 +529,12 @@ const ProfileSetup: React.FC = () => {
                 <option value="africa">Africa</option>
                 <option value="oceania">Oceania</option>
               </select>
+              {errors.location && (
+                <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.location}
+                </p>
+              )}
             </div>
           </div>
 
@@ -177,7 +544,6 @@ const ProfileSetup: React.FC = () => {
               Your Interests <span className="text-[#ff7a66]">*</span>
               <Info className="w-4 h-4 text-gray-500" />
             </label>
-            <p className="text-sm text-gray-500 mb-4">Get notified of new listings based on your skills</p>
             <div className="flex flex-wrap gap-2">
               {AVAILABLE_SKILLS.map(skill => (
                 <button
@@ -194,13 +560,21 @@ const ProfileSetup: React.FC = () => {
                 </button>
               ))}
             </div>
+            {errors.skills && (
+              <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.skills}
+              </p>
+            )}
           </div>
 
           {/* Socials Section */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <div>
-                <label className="block text-sm font-medium text-gray-300">Socials</label>
+                <label className="block text-sm font-medium text-gray-300">
+                  Socials <span className="text-[#ff7a66]">*</span>
+                </label>
                 <p className="text-sm text-gray-500">Fill at least one, but more the merrier</p>
               </div>
             </div>
@@ -271,16 +645,32 @@ const ProfileSetup: React.FC = () => {
                 />
               </div>
             </div>
+            {errors.socials && (
+              <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.socials}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full py-4 bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2 text-lg"
+            disabled={isSubmitting || isCheckingUsername || !isUsernameAvailable}
+            className="w-full py-4 bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#ff7a66]"
           >
-            <Send className="w-5 h-5" />
-            Create Profile
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {existingProfile ? 'Updating Profile...' : 'Creating Profile...'}
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                {existingProfile ? 'Update Profile' : 'Create Profile'}
+              </>
+            )}
           </button>
         </div>
       </div>
