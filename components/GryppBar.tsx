@@ -1,6 +1,14 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 export default function NavigationBar() {
+  const router = useRouter()
+
+  const handleLoginClick = () => {
+    router.push('/login')
+  }
+
   return (
     <nav className="bg-white text-gray-900 px-6 py-1 rounded-lg border border-gray-200">
       <div className="flex items-center justify-between">
@@ -27,7 +35,10 @@ export default function NavigationBar() {
           <button className="px-5 py-2 text-sm font-medium border border-gray-900 rounded-lg hover:bg-gray-900 hover:text-white transition-colors">
             BECOME A SPONSOR
           </button>
-          <button className="px-5 py-2 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2">
+          <button 
+            onClick={handleLoginClick}
+            className="px-5 py-2 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+          >
             LOG IN
             <svg 
               width="14" 
