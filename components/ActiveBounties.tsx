@@ -42,93 +42,71 @@ const BountyCard: React.FC<BountyCardProps> = ({
     return `$${amount.toLocaleString()}`;
   };
 
+  const progressPercentage = Math.min((totalViews / 10000000) * 100, 100);
+
   return (
-    <div className="w-full bg-white rounded-lg border border-gray-200  p-6 font-sans">
-      <div className="flex justify-between items-start mb-4">
+    <div className="w-full bg-[#1a1a1a] rounded-2xl border border-gray-700 p-6 font-sans">
+      {/* Title and Description with Logo */}
+      <div className="flex items-start gap-3 mb-6">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ff7a66] to-[#ff5544] flex-shrink-0 overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop" 
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="flex-1">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{title}</h2>
-          <p className="text-gray-500 text-sm">{description}</p>
+          <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
+          <p className="text-gray-400 text-sm">{description}</p>
         </div>
-        <button 
-          className={`ml-4 px-6 py-2 rounded-lg text-sm font-medium ${
-            status === 'open' 
-              ? 'bg-indigo-100 text-indigo-600' 
-              : 'bg-gray-100 text-gray-600'
-          }`}
-        >
-          {status === 'open' ? 'Open' : 'Closed'}
-        </button>
+        {/* Content Type Tag */}
+        {contentTypeTags.length > 0 && (
+          <div className="px-3 py-1 bg-white text-black text-xs font-medium rounded-md whitespace-nowrap">
+            {contentTypeTags[0]}
+          </div>
+        )}
       </div>
 
-      <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden bg-gray-200">
-        <img 
-          src={imageUrl} 
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="flex justify-between items-start gap-4 mb-6">
-        <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full border border-gray-200 shrink-0">
-          <TrendingUp className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-            ${formatNumber(moneyPerMillionViews)}/1m views
-          </span>
+      {/* Stats in one line */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Entries</p>
+          <p className="text-white font-bold text-lg">{entries}</p>
         </div>
-        <div className="flex flex-wrap gap-2 justify-end">
-          {contentTypeTags.map((tag, index) => (
-            <div 
-              key={`content-${index}`}
-              className="px-3 py-1.5 rounded-full border text-xs font-medium bg-purple-50 border-purple-200 text-purple-700"
-            >
-              {tag}
-            </div>
-          ))}
-          {categoryTags.map((tag, index) => (
-            <div 
-              key={`category-${index}`}
-              className="px-3 py-1.5 rounded-full border text-xs font-medium bg-emerald-50 border-emerald-200 text-emerald-700"
-            >
-              {tag}
-            </div>
-          ))}
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Views</p>
+          <p className="text-white font-bold text-lg">{formatNumber(totalViews)}</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Prize</p>
+          <p className="text-white font-bold text-lg">{formatCurrency(prize)}</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs mb-1">Per 1M Views</p>
+          <p className="text-white font-bold text-lg">${formatNumber(moneyPerMillionViews)}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3 mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-        <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Entries</p>
-          <p className="text-xl font-bold text-gray-900">{entries}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Views</p>
-          <p className="text-xl font-bold text-gray-900">{formatNumber(totalViews)}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Paid</p>
-          <p className="text-xl font-bold text-gray-900">{formatCurrency(paid)}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">Prize</p>
-          <p className="text-xl font-bold text-gray-900">{formatCurrency(prize)}</p>
+      {/* Progress Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-gray-400 text-xs">Progress</span> </div>
+        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
         </div>
       </div>
 
-      <div className="flex gap-3">
-        <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-          <Eye className="w-5 h-5" />
-          View Details
-        </button>
-        <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 rounded-lg text-white font-medium hover:bg-indigo-700 transition-colors">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Submit Clip
-        </button>
-      </div>
+      {/* Button */}
+      <button className="w-full py-3 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2">
+        <Eye className="w-4 h-4" />
+        View Details
+      </button>
     </div>
   );
-};
+}
 
 // Sample bounty data
 const bountyData: BountyCardProps[] = [
@@ -141,7 +119,7 @@ const bountyData: BountyCardProps[] = [
     totalViews: 1560000,
     paid: 7800,
     prize: 5000,
-    contentTypeTags: ['Video', 'Animation'],
+    contentTypeTags: ['Clipping'],
     categoryTags: ['Tech', 'SaaS'],
     status: 'open'
   },
@@ -154,7 +132,7 @@ const bountyData: BountyCardProps[] = [
     totalViews: 2340000,
     paid: 8190,
     prize: 3500,
-    contentTypeTags: ['Video', 'Tutorial'],
+    contentTypeTags: ['Logo Display'],
     categoryTags: ['Fitness', 'Lifestyle'],
     status: 'open'
   },
@@ -167,7 +145,7 @@ const bountyData: BountyCardProps[] = [
     totalViews: 1890000,
     paid: 7938,
     prize: 4000,
-    contentTypeTags: ['Video', 'Photos'],
+    contentTypeTags: ['Video content'],
     categoryTags: ['Food', 'Cooking'],
     status: 'open'
   },
@@ -260,7 +238,7 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
     <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
       <div className="max-w-[1700px] mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Active Bounties</h1>
+          <h1 className="text-2xl font-bold mb-2">Active Bounties</h1>
         </div>
         
         <div 
