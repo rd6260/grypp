@@ -174,7 +174,7 @@ const ProfileSetup: React.FC = () => {
           {/* Skills Section */}
           <div>
             <label className="block text-sm font-medium mb-2 flex items-center gap-2 text-gray-300">
-              Your Skills <span className="text-[#ff7a66]">*</span>
+              Your Interests <span className="text-[#ff7a66]">*</span>
               <Info className="w-4 h-4 text-gray-500" />
             </label>
             <p className="text-sm text-gray-500 mb-4">Get notified of new listings based on your skills</p>
