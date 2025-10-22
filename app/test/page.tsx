@@ -1,7 +1,8 @@
 'use client'
-import { UserTypeSelection } from "@/components/UserTypeSelection";
+
+import ProfileSetup from "@/components/ProfileSetup"
 
 export default function TestPage() {
 
-  return <UserTypeSelection onSelect={()=>{}} />;
+  return <ProfileSetup/>
 }
