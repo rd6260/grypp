@@ -1,6 +1,8 @@
 'use client';
 
 import { PrivyProvider } from '@privy-io/react-auth';
+import { base } from 'viem/chains';
+
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +14,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           theme: 'dark',
           accentColor: '#ff7a66',
         },
+        defaultChain: base,
+        supportedChains: [base],
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
         },

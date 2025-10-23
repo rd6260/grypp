@@ -8,7 +8,7 @@ export default function NavigationBar() {
   const { ready, authenticated, login, user } = usePrivy()
 
   const handleLoginClick = () => {
-    router.push('/login')
+    router.push('/onboarding')
   }
 
   const handleProfileClick = () => {

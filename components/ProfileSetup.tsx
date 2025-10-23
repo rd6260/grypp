@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Upload, X, Check, Info, Send, Instagram, Youtube, MapPin, User, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/navigation'
 
 interface Skill {
   id: string;
@@ -26,7 +27,8 @@ interface ProfileSetupProps {
 
 const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
   const { user, ready } = usePrivy();
-  
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -37,7 +39,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
     youtube: '',
     tiktok: '',
   });
-  
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
@@ -94,7 +96,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
             const { data: urlData } = supabase.storage
               .from('pfp')
               .getPublicUrl(user.id);
-            
+
             if (urlData?.publicUrl) {
               setProfileImage(urlData.publicUrl);
             }
@@ -161,8 +163,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
   };
 
   const toggleSkill = (skillId: string) => {
-    setSelectedSkills(prev => 
-      prev.includes(skillId) 
+    setSelectedSkills(prev =>
+      prev.includes(skillId)
         ? prev.filter(id => id !== skillId)
         : [...prev, skillId]
     );
@@ -190,7 +192,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
         setProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
-      
+
       if (errors.profileImage) {
         setErrors(prev => ({ ...prev, profileImage: '' }));
       }
@@ -269,6 +271,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
   };
 
   const handleSubmit = async () => {
+
     if (!validateForm()) {
       return;
     }
@@ -303,7 +306,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
       };
 
       let result;
-      
+
       if (existingProfile) {
         result = await supabase
           .from('users')
@@ -330,8 +333,10 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
       }
 
       console.log('Profile saved:', data);
-      alert(existingProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
-      
+      // alert(existingProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
+
+      router.push('/')
+
     } catch (err) {
       console.error('Unexpected error:', err);
       alert('An unexpected error occurred. Please try again.');
@@ -372,7 +377,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
             {existingProfile ? 'Update Your Profile' : 'Setup Your Profile'}
           </h1>
           <p className="text-gray-400 text-xl">
-            {existingProfile 
+            {existingProfile
               ? 'Make changes to your profile information below.'
               : `Set up your ${userType} profile - it takes less than a minute.`}
           </p>
@@ -382,8 +387,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
           {/* Profile Image Upload */}
           <div className="flex items-start gap-6">
             <div className="relative">
-              <label 
-                htmlFor="profile-image" 
+              <label
+                htmlFor="profile-image"
                 className="w-24 h-24 rounded-full border-2 border-dashed border-[#ff7a66] flex items-center justify-center cursor-pointer hover:border-[#ff8c7a] transition-colors bg-zinc-900 overflow-hidden"
               >
                 {profileImage ? (
@@ -420,9 +425,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
                   value={formData.firstName}
                   onChange={handleInputChange}
                   placeholder="First Name"
-                  className={`w-full px-4 py-3 bg-zinc-900 border ${
-                    errors.firstName ? 'border-red-500' : 'border-zinc-800'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+                  className={`w-full px-4 py-3 bg-zinc-900 border ${errors.firstName ? 'border-red-500' : 'border-zinc-800'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
                 />
                 {errors.firstName && (
                   <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -442,9 +446,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
                   value={formData.lastName}
                   onChange={handleInputChange}
                   placeholder="Last Name"
-                  className={`w-full px-4 py-3 bg-zinc-900 border ${
-                    errors.lastName ? 'border-red-500' : 'border-zinc-800'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+                  className={`w-full px-4 py-3 bg-zinc-900 border ${errors.lastName ? 'border-red-500' : 'border-zinc-800'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
                 />
                 {errors.lastName && (
                   <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -469,9 +472,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className={`w-full pl-10 pr-12 py-3 bg-zinc-900 border ${
-                    errors.username ? 'border-red-500' : 'border-zinc-800'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white`}
+                  className={`w-full pl-10 pr-12 py-3 bg-zinc-900 border ${errors.username ? 'border-red-500' : 'border-zinc-800'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white`}
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
                   {isCheckingUsername ? (
@@ -499,9 +501,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 bg-zinc-900 border ${
-                  errors.location ? 'border-red-500' : 'border-zinc-800'
-                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white appearance-none cursor-pointer`}
+                className={`w-full px-4 py-3 bg-zinc-900 border ${errors.location ? 'border-red-500' : 'border-zinc-800'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white appearance-none cursor-pointer`}
               >
                 <option value="">Select a region...</option>
                 <option value="north-america">North America</option>
@@ -532,11 +533,10 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
                   key={skill.id}
                   type="button"
                   onClick={() => toggleSkill(skill.id)}
-                  className={`px-4 py-2 rounded-lg border transition-all ${
-                    selectedSkills.includes(skill.id)
-                      ? 'bg-[#ff7a66] border-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.4)]'
-                      : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
-                  }`}
+                  className={`px-4 py-2 rounded-lg border transition-all ${selectedSkills.includes(skill.id)
+                    ? 'bg-[#ff7a66] border-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.4)]'
+                    : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
+                    }`}
                 >
                   {skill.name} {selectedSkills.includes(skill.id) ? '✓' : '+'}
                 </button>
@@ -609,7 +609,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
                   <svg className="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
                   </svg>
                   <span className="ml-2 text-gray-400">tiktok.com/@</span>
                 </div>
