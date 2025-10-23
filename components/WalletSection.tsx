@@ -285,29 +285,34 @@ const WalletSection: React.FC = () => {
           </div>
         </div>
 
+        { /*
+className="w-full py-4 bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#ff7a66]"
+ 
+        */}
+
         {/* Actions */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="flex items-center justify-center gap-3 px-6 py-4 bg-green-500/10 border border-green-500/20 rounded-xl hover:bg-green-500/20 hover:border-green-500/30 transition-all group"
+              className="flex items-center justify-center gap-3 px-6 py-4 text-lg bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#ff7a66]"
             >
-              <ArrowDownToLine className="w-5 h-5 text-green-500" />
+              <ArrowDownToLine className="w-5 h-5 text-white-500" />
               <div className="text-left">
                 <p className="font-semibold text-white">Deposit</p>
-                <p className="text-xs text-gray-400">Add funds to wallet</p>
+                <p className="text-xs text-white-400">Add funds to wallet</p>
               </div>
             </button>
 
             <button
               onClick={() => setShowWithdrawModal(true)}
-              className="flex items-center justify-center gap-3 px-6 py-4 bg-orange-500/10 border border-orange-500/20 rounded-xl hover:bg-orange-500/20 hover:border-orange-500/30 transition-all group"
+              className="flex items-center justify-center gap-3 px-6 py-4 text-lg bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#ff7a66]"
             >
-              <ArrowUpFromLine className="w-5 h-5 text-orange-500" />
+              <ArrowUpFromLine className="w-5 h-5 text-white-500" />
               <div className="text-left">
                 <p className="font-semibold text-white">Withdraw</p>
-                <p className="text-xs text-gray-400">Send funds out</p>
+                <p className="text-xs text-white-400">Send funds out</p>
               </div>
             </button>
           </div>
