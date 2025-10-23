@@ -1,8 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { 
-  Trophy, Users, Settings, Search, Filter, Eye, Check, X, 
-  RefreshCw, Clock, CheckCircle, XCircle 
+import {
+  Trophy, Users, Settings, Search, Filter, Eye, Check, X,
+  RefreshCw, Clock, CheckCircle, XCircle
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -85,7 +85,7 @@ const ClipSubmissions = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [bountyFilter, setBountyFilter] = useState('all');
-  const [timeFilter, setTimeFilter] = useState('7days');
+  const [timeFilter, setTimeFilter] = useState('all');
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
@@ -103,7 +103,7 @@ const ClipSubmissions = () => {
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      
+
       // Build query for submissions
       let query = supabase
         .from('submissions')
@@ -202,7 +202,7 @@ const ClipSubmissions = () => {
 
     // Search filter
     const searchLower = searchQuery.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       submission.campaign?.title?.toLowerCase().includes(searchLower) ||
       submission.campaign?.description?.toLowerCase().includes(searchLower) ||
       submission.user?.username?.toLowerCase().includes(searchLower);
@@ -351,7 +351,7 @@ const ClipSubmissions = () => {
             <option value="all">All time</option>
           </select>
 
-          <button 
+          <button
             onClick={fetchSubmissions}
             className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white hover:bg-zinc-800 transition-all"
           >
@@ -369,7 +369,7 @@ const ClipSubmissions = () => {
             {getTimeFilterDisplay()}
           </span>
         </div>
-        
+
         <div className="grid grid-cols-4 gap-6">
           <div>
             <p className="text-sm text-gray-400 mb-2">Pending</p>
@@ -420,7 +420,7 @@ const ClipSubmissions = () => {
 
         {/* Submission Rows */}
         {!loading && filteredSubmissions.map((submission) => {
-          const avatarUrl = submission.user?.pfp_url || 
+          const avatarUrl = submission.user?.pfp_url ||
             `https://api.dicebear.com/7.x/avataaars/svg?seed=${submission.user?.first_name || 'User'}`;
           const isPending = submission.status === null;
           const isApproved = submission.status === 'approved';
@@ -461,15 +461,19 @@ const ClipSubmissions = () => {
               {/* Performance */}
               <div className="col-span-2">
                 <div className="px-3 py-1.5 bg-zinc-800 border border-[#ff7a66] rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-[#ff7a66]" />
-                    <span className="text-white font-semibold">
-                      ${submission.campaign?.money_per_million_views || 0}/1M
+                  <div className="flex items-center justify-between gap-3 mb-1">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="w-4 h-4 text-[#ff7a66]" />
+                      <span className="text-white font-semibold">
+                        {(submission.campaign?.total_views || 0).toLocaleString()} views
+                      </span>
+                    </div>
+                    <span className="text-[#ff7a66] font-bold">
+                      ${submission.campaign?.prize || 0}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Views: {(submission.campaign?.total_views || 0).toLocaleString()} • 
-                    Prize: ${submission.campaign?.prize || 0}
+                  <p className="text-xs text-gray-500">
+                    ${submission.campaign?.money_per_million_views || 0}/1M views
                   </p>
                 </div>
               </div>
@@ -498,16 +502,16 @@ const ClipSubmissions = () => {
                       <Eye className="w-4 h-4" />
                       <span>Review</span>
                     </a>
-                    
+
                     {/* Dropdown Arrow */}
                     <button
                       onClick={() => setOpenDropdownId(openDropdownId === submission.id ? null : submission.id)}
                       className="px-2 py-2 bg-zinc-800 border border-l-0 border-zinc-700 text-white rounded-r-lg hover:bg-zinc-700 transition-all"
                     >
-                      <svg 
-                        className={`w-4 h-4 transition-transform ${openDropdownId === submission.id ? 'rotate-180' : ''}`} 
-                        fill="none" 
-                        stroke="currentColor" 
+                      <svg
+                        className={`w-4 h-4 transition-transform ${openDropdownId === submission.id ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -519,8 +523,8 @@ const ClipSubmissions = () => {
                   {openDropdownId === submission.id && (
                     <>
                       {/* Backdrop to close dropdown */}
-                      <div 
-                        className="fixed inset-0 z-10" 
+                      <div
+                        className="fixed inset-0 z-10"
                         onClick={() => setOpenDropdownId(null)}
                       />
                       <div className="absolute left-0 mt-2 w-48 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg z-20 overflow-hidden">
@@ -550,7 +554,7 @@ const ClipSubmissions = () => {
                             </button>
                           </>
                         )}
-                        
+
                         {(isApproved || submission.status === 'rejected') && (
                           <button
                             onClick={() => {

@@ -1,10 +1,37 @@
-import React from 'react';
-import { Eye, TrendingUp } from 'lucide-react';
+// components/ActiveBounties.tsx
+
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { Eye } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+
+
+const supabase = createClient();
+
+interface Campaign {
+  id: string;
+  created_at: string;
+  creator_id: string;
+  title: string;
+  description: string;
+  image: string;
+  money_per_million_views: number;
+  entries: number;
+  total_views: number;
+  paid: number;
+  prize: number;
+  content_type_tags: string[];
+  category_tags: string[];
+  status: boolean;
+  creator_pfp?: string;
+}
 
 interface BountyCardProps {
   title: string;
   description: string;
   imageUrl: string;
+  creatorPfp?: string;
   moneyPerMillionViews: number;
   entries: number;
   totalViews: number;
@@ -19,6 +46,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
   title,
   description,
   imageUrl,
+  creatorPfp,
   moneyPerMillionViews,
   entries,
   totalViews,
@@ -50,7 +78,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
       <div className="flex items-start gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ff7a66] to-[#ff5544] flex-shrink-0 overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop" 
+            src={creatorPfp || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"} 
             alt="Profile"
             className="w-full h-full object-cover"
           />
@@ -90,7 +118,8 @@ const BountyCard: React.FC<BountyCardProps> = ({
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-gray-400 text-xs">Progress</span> </div>
+          <span className="text-gray-400 text-xs">Progress</span>
+        </div>
         <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
@@ -108,132 +137,70 @@ const BountyCard: React.FC<BountyCardProps> = ({
   );
 }
 
-// Sample bounty data
-const bountyData: BountyCardProps[] = [
-  {
-    title: "Product Launch Video",
-    description: "Create an engaging video showcasing our new product features",
-    imageUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 5000,
-    entries: 24,
-    totalViews: 1560000,
-    paid: 7800,
-    prize: 5000,
-    contentTypeTags: ['Clipping'],
-    categoryTags: ['Tech', 'SaaS'],
-    status: 'open'
-  },
-  {
-    title: "Fitness Challenge",
-    description: "30-day transformation workout routine compilation",
-    imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 3500,
-    entries: 42,
-    totalViews: 2340000,
-    paid: 8190,
-    prize: 3500,
-    contentTypeTags: ['Logo Display'],
-    categoryTags: ['Fitness', 'Lifestyle'],
-    status: 'open'
-  },
-  {
-    title: "Recipe Compilation",
-    description: "Quick and healthy meal prep ideas for busy professionals",
-    imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 4200,
-    entries: 31,
-    totalViews: 1890000,
-    paid: 7938,
-    prize: 4000,
-    contentTypeTags: ['Video content'],
-    categoryTags: ['Food', 'Cooking'],
-    status: 'open'
-  },
-  {
-    title: "Travel Vlog Series",
-    description: "Capture hidden gems and local experiences around Europe",
-    imageUrl: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 6000,
-    entries: 18,
-    totalViews: 3420000,
-    paid: 20520,
-    prize: 8000,
-    contentTypeTags: ['Vlog', 'Video'],
-    categoryTags: ['Travel', 'Adventure'],
-    status: 'open'
-  },
-  {
-    title: "Gaming Highlights",
-    description: "Epic moments and strategies from competitive gaming",
-    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 7500,
-    entries: 67,
-    totalViews: 5680000,
-    paid: 42600,
-    prize: 10000,
-    contentTypeTags: ['Stream', 'Video'],
-    categoryTags: ['Gaming', 'Esports'],
-    status: 'open'
-  },
-  {
-    title: "DIY Home Projects",
-    description: "Creative home improvement and decoration tutorials",
-    imageUrl: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 3800,
-    entries: 29,
-    totalViews: 1240000,
-    paid: 4712,
-    prize: 3000,
-    contentTypeTags: ['Tutorial', 'Video'],
-    categoryTags: ['DIY', 'Home'],
-    status: 'open'
-  },
-  {
-    title: "Tech Reviews",
-    description: "In-depth analysis of latest gadgets and technology",
-    imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 5500,
-    entries: 35,
-    totalViews: 2870000,
-    paid: 15785,
-    prize: 6000,
-    contentTypeTags: ['Review', 'Video'],
-    categoryTags: ['Tech', 'Gadgets'],
-    status: 'open'
-  },
-  {
-    title: "Fashion Lookbook",
-    description: "Seasonal outfit ideas and styling tips for all occasions",
-    imageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 4500,
-    entries: 52,
-    totalViews: 3150000,
-    paid: 14175,
-    prize: 5500,
-    contentTypeTags: ['Video', 'Photos'],
-    categoryTags: ['Fashion', 'Style'],
-    status: 'open'
-  },
-  {
-    title: "Music Production",
-    description: "Behind-the-scenes of creating beats and mixing tracks",
-    imageUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&h=400&fit=crop",
-    moneyPerMillionViews: 4800,
-    entries: 21,
-    totalViews: 980000,
-    paid: 4704,
-    prize: 4000,
-    contentTypeTags: ['Tutorial', 'Video'],
-    categoryTags: ['Music', 'Production'],
-    status: 'closed'
-  }
-];
-
 interface ActiveBountiesProps {
   cardsPerRow?: number;
 }
 
 const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      const { data: campaignsData, error } = await supabase
+        .from('campaign')
+        .select('*')
+        .eq('status', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Get unique creator IDs
+      const creatorIds = [...new Set(campaignsData?.map(c => c.creator_id) || [])];
+
+      // Fetch creator pfp_urls
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('id, pfp_url')
+        .in('id', creatorIds);
+
+      if (usersError) throw usersError;
+
+      // Map pfp_urls to campaigns
+      const userPfpMap = new Map(usersData?.map(u => [u.id, u.pfp_url]) || []);
+      
+      const campaignsWithPfp = campaignsData?.map(campaign => ({
+        ...campaign,
+        creator_pfp: userPfpMap.get(campaign.creator_id)
+      })) || [];
+
+      setCampaigns(campaignsWithPfp);
+    } catch (error) {
+      console.error('Error fetching campaigns:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
+        <div className="max-w-[1700px] mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold mb-2">Active Bounties</h1>
+          </div>
+          <div className="flex items-center justify-center py-20">
+            <div className="text-gray-400">Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
       <div className="max-w-[1700px] mx-auto">
@@ -247,8 +214,22 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
             gridTemplateColumns: `repeat(${cardsPerRow}, minmax(0, 1fr))`
           }}
         >
-          {bountyData.map((bounty, index) => (
-            <BountyCard key={index} {...bounty} />
+          {campaigns.map((campaign) => (
+            <BountyCard 
+              key={campaign.id}
+              title={campaign.title}
+              description={campaign.description}
+              imageUrl={campaign.image}
+              creatorPfp={campaign.creator_pfp}
+              moneyPerMillionViews={campaign.money_per_million_views}
+              entries={campaign.entries}
+              totalViews={campaign.total_views}
+              paid={campaign.paid}
+              prize={campaign.prize}
+              contentTypeTags={campaign.content_type_tags}
+              categoryTags={campaign.category_tags}
+              status={campaign.status ? 'open' : 'closed'}
+            />
           ))}
         </div>
       </div>
