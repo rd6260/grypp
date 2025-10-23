@@ -37,7 +37,7 @@ const NotAdminPopup = () => {
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('submissions');
-  
+
   // --- NEW: Auth State ---
   const { ready, authenticated, user } = usePrivy();
   const router = useRouter();
@@ -56,9 +56,9 @@ const AdminPanel = () => {
         const checkAdminStatus = async () => {
           if (user && user.id) {
             // As requested: user.id is the privy id, which is the 'id' in your table
-            const privyId = user.id; 
+            const privyId = user.id;
             const supabase = createClient();
-            
+
             try {
               const { data, error } = await supabase
                 .from('users')
@@ -118,15 +118,14 @@ const AdminPanel = () => {
         {/* Sidebar */}
         <div className="w-64 bg-black border-r border-zinc-900 p-6">
           <h1 className="text-2xl font-bold text-white mb-8">Admin Panel</h1>
-          
+
           <nav className="space-y-2">
             <button
               onClick={() => setActiveTab('submissions')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                activeTab === 'submissions'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'submissions'
                   ? 'bg-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.3)]'
                   : 'bg-zinc-900 text-gray-400 hover:bg-zinc-800 border border-zinc-800'
-              }`}
+                }`}
             >
               <List className="w-5 h-5" />
               <span className="font-medium">Submissions</span>
@@ -134,11 +133,10 @@ const AdminPanel = () => {
 
             <button
               onClick={() => setActiveTab('bounties')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                activeTab === 'bounties'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'bounties'
                   ? 'bg-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.3)]'
                   : 'bg-zinc-900 text-gray-400 hover:bg-zinc-800 border border-zinc-800'
-              }`}
+                }`}
             >
               <Trophy className="w-5 h-5" />
               <span className="font-medium">Bounties</span>
@@ -146,11 +144,10 @@ const AdminPanel = () => {
 
             <button
               onClick={() => setActiveTab('creators')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                activeTab === 'creators'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'creators'
                   ? 'bg-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.3)]'
                   : 'bg-zinc-900 text-gray-400 hover:bg-zinc-800 border border-zinc-800'
-              }`}
+                }`}
             >
               <Users className="w-5 h-5" />
               <span className="font-medium">Creators</span>
@@ -158,11 +155,10 @@ const AdminPanel = () => {
 
             <button
               onClick={() => setActiveTab('payouts')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                activeTab === 'payouts'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'payouts'
                   ? 'bg-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.3)]'
                   : 'bg-zinc-900 text-gray-400 hover:bg-zinc-800 border border-zinc-800'
-              }`}
+                }`}
             >
               <DollarSign className="w-5 h-5" />
               <span className="font-medium">Payouts</span>
@@ -170,11 +166,10 @@ const AdminPanel = () => {
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                activeTab === 'settings'
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === 'settings'
                   ? 'bg-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.3)]'
                   : 'bg-zinc-900 text-gray-400 hover:bg-zinc-800 border border-zinc-800'
-              }`}
+                }`}
             >
               <Settings className="w-5 h-5" />
               <span className="font-medium">Settings</span>
@@ -184,54 +179,24 @@ const AdminPanel = () => {
 
         {/* Main Content */}
         <div className="flex-1 p-8">
-          
+
           {/* --- REFACTORED: Conditional Tab Content --- */}
-          
+
           {activeTab === 'submissions' && (
-            <>
-              {/* 1. The refactored component */}
-              <ClipSubmissions />
-              
-              {/* 2. The summary section that belongs to this tab */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-white">Summary</h3>
-                  <span className="px-3 py-1 bg-[#ff7a66] text-white text-sm rounded-lg">Today</span>
-                </div>
-                
-                <div className="grid grid-cols-4 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-400 mb-2">Pending</p>
-                    <p className="text-3xl font-bold text-white">{stats.pending}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400 mb-2">Accepted</p>
-                    <p className="text-3xl font-bold text-white">{stats.accepted}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400 mb-2">Declined</p>
-                    <p className="text-3xl font-bold text-white">{stats.declined}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400 mb-2">Payouts Queued</p>
-                    <p className="text-3xl font-bold text-white">${stats.payoutsQueued.toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-            </>
+            <ClipSubmissions />
           )}
 
           {activeTab === 'bounties' && (
-             <div className="text-white text-3xl font-bold">Bounties Page (Content goes here)</div>
+            <div className="text-white text-3xl font-bold">Bounties Page (Content goes here)</div>
           )}
           {activeTab === 'creators' && (
-             <div className="text-white text-3xl font-bold">Creators Page (Content goes here)</div>
+            <div className="text-white text-3xl font-bold">Creators Page (Content goes here)</div>
           )}
-           {activeTab === 'payouts' && (
-             <div className="text-white text-3xl font-bold">Payouts Page (Content goes here)</div>
+          {activeTab === 'payouts' && (
+            <div className="text-white text-3xl font-bold">Payouts Page (Content goes here)</div>
           )}
-           {activeTab === 'settings' && (
-             <div className="text-white text-3xl font-bold">Settings Page (Content goes here)</div>
+          {activeTab === 'settings' && (
+            <div className="text-white text-3xl font-bold">Settings Page (Content goes here)</div>
           )}
 
         </div>

@@ -111,7 +111,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
 // Sample bounty data
 const bountyData: BountyCardProps[] = [
   {
-    title: "Product Launch Video and lots of other stuff to that needs to be done",
+    title: "Product Launch Video",
     description: "Create an engaging video showcasing our new product features",
     imageUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=400&fit=crop",
     moneyPerMillionViews: 5000,

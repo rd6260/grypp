@@ -233,6 +233,7 @@ const WalletSection: React.FC = () => {
         {/* Balances Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* ETH Balance */}
+          {/*
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-gray-400">ETH Balance</h3>
@@ -257,6 +258,7 @@ const WalletSection: React.FC = () => {
               </div>
             )}
           </div>
+          */}
 
           {/* USDC Balance */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
