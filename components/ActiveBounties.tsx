@@ -1,5 +1,3 @@
-// components/ActiveBounties.tsx
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -78,7 +76,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
       <div className="flex items-start gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ff7a66] to-[#ff5544] flex-shrink-0 overflow-hidden">
           <img 
-            src={creatorPfp || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"} 
+            src={imageUrl || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"} 
             alt="Profile"
             className="w-full h-full object-cover"
           />
@@ -160,25 +158,26 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
       if (error) throw error;
 
       // Get unique creator IDs
-      const creatorIds = [...new Set(campaignsData?.map(c => c.creator_id) || [])];
-
-      // Fetch creator pfp_urls
-      const { data: usersData, error: usersError } = await supabase
-        .from('users')
-        .select('id, pfp_url')
-        .in('id', creatorIds);
-
-      if (usersError) throw usersError;
-
-      // Map pfp_urls to campaigns
-      const userPfpMap = new Map(usersData?.map(u => [u.id, u.pfp_url]) || []);
-      
-      const campaignsWithPfp = campaignsData?.map(campaign => ({
-        ...campaign,
-        creator_pfp: userPfpMap.get(campaign.creator_id)
-      })) || [];
-
-      setCampaigns(campaignsWithPfp);
+      // const creatorIds = [...new Set(campaignsData?.map(c => c.creator_id) || [])];
+      //
+      // // Fetch creator pfp_urls
+      // const { data: usersData, error: usersError } = await supabase
+      //   .from('users')
+      //   .select('id, pfp_url')
+      //   .in('id', creatorIds);
+      //
+      // if (usersError) throw usersError;
+      //
+      // // Map pfp_urls to campaigns
+      // const userPfpMap = new Map(usersData?.map(u => [u.id, u.pfp_url]) || []);
+      //
+      // const campaignsWithPfp = campaignsData?.map(campaign => ({
+      //   ...campaign,
+      //   creator_pfp: userPfpMap.get(campaign.creator_id)
+      // })) || [];
+      //
+      // setCampaigns(campaignsWithPfp);
+      setCampaigns(campaignsData);
     } catch (error) {
       console.error('Error fetching campaigns:', error);
     } finally {

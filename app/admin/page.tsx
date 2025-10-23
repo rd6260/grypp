@@ -5,6 +5,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import ClipSubmissions from '@/components/ClipSubmissions';
+import BountySection from '@/components/BountySection';
 
 // --- Helper Components for Auth States ---
 
@@ -187,7 +188,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab === 'bounties' && (
-            <div className="text-white text-3xl font-bold">Bounties Page (Content goes here)</div>
+            <BountySection/>
           )}
           {activeTab === 'creators' && (
             <div className="text-white text-3xl font-bold">Creators Page (Content goes here)</div>
