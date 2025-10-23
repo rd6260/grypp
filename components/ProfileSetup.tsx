@@ -19,7 +19,12 @@ const AVAILABLE_SKILLS: Skill[] = [
   { id: 'data', name: 'Data Science' },
 ];
 
-const ProfileSetup: React.FC = () => {
+// Add UserType prop
+interface ProfileSetupProps {
+  userType: 'creator' | 'clipper';
+}
+
+const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
   const { user, ready } = usePrivy();
   
   const [formData, setFormData] = useState({
@@ -62,14 +67,12 @@ const ProfileSetup: React.FC = () => {
           .single();
 
         if (error && error.code !== 'PGRST116') {
-          // PGRST116 means no rows returned (no existing profile)
           console.error('Error loading profile:', error);
           setIsLoadingProfile(false);
           return;
         }
 
         if (data) {
-          // Profile exists - populate form with existing data
           setExistingProfile(true);
           setOriginalUsername(data.username || '');
           setFormData({
@@ -85,11 +88,9 @@ const ProfileSetup: React.FC = () => {
           setSelectedSkills(data.interests || []);
           setIsUsernameAvailable(true);
 
-          // Load existing profile picture if it exists
           if (data.pfp_url) {
             setProfileImage(data.pfp_url);
           } else {
-            // Try to load from storage bucket
             const { data: urlData } = supabase.storage
               .from('pfp')
               .getPublicUrl(user.id);
@@ -99,7 +100,6 @@ const ProfileSetup: React.FC = () => {
             }
           }
         } else {
-          // No profile exists - generate default username
           setFormData(prev => ({
             ...prev,
             username: `user-${user.id.slice(0, 8)}`,
@@ -123,7 +123,6 @@ const ProfileSetup: React.FC = () => {
         return;
       }
 
-      // If username hasn't changed from original, it's available
       if (existingProfile && formData.username === originalUsername) {
         setIsUsernameAvailable(true);
         return;
@@ -138,10 +137,8 @@ const ProfileSetup: React.FC = () => {
           .single();
 
         if (error && error.code === 'PGRST116') {
-          // No rows returned - username is available
           setIsUsernameAvailable(true);
         } else if (data) {
-          // Username exists
           setIsUsernameAvailable(false);
         }
       } catch (err) {
@@ -158,7 +155,6 @@ const ProfileSetup: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -178,13 +174,11 @@ const ProfileSetup: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setErrors(prev => ({ ...prev, profileImage: 'Please upload an image file' }));
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, profileImage: 'Image size must be less than 5MB' }));
         return;
@@ -197,7 +191,6 @@ const ProfileSetup: React.FC = () => {
       };
       reader.readAsDataURL(file);
       
-      // Clear error
       if (errors.profileImage) {
         setErrors(prev => ({ ...prev, profileImage: '' }));
       }
@@ -210,7 +203,6 @@ const ProfileSetup: React.FC = () => {
     }
 
     try {
-      // Delete existing profile picture if it exists
       const { error: deleteError } = await supabase.storage
         .from('pfp')
         .remove([userId]);
@@ -219,7 +211,6 @@ const ProfileSetup: React.FC = () => {
         console.error('Error deleting old profile picture:', deleteError);
       }
 
-      // Upload new profile picture with user ID as filename
       const { error: uploadError } = await supabase.storage
         .from('pfp')
         .upload(userId, profileImageFile, {
@@ -232,7 +223,6 @@ const ProfileSetup: React.FC = () => {
         throw uploadError;
       }
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('pfp')
         .getPublicUrl(userId);
@@ -269,7 +259,6 @@ const ProfileSetup: React.FC = () => {
       newErrors.skills = 'Please select at least one interest';
     }
 
-    // Check if at least one social media is provided
     const hasSocial = formData.twitter || formData.instagram || formData.youtube || formData.tiktok;
     if (!hasSocial) {
       newErrors.socials = 'At least one social media link is required';
@@ -292,14 +281,15 @@ const ProfileSetup: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Upload profile picture if a new one was selected
       let pfpUrl = null;
       if (profileImageFile) {
         pfpUrl = await uploadProfilePicture(user.id);
       }
 
+      // ADD userType to profileData
       const profileData = {
         id: user.id,
+        type: userType, // Add this line
         username: formData.username,
         first_name: formData.firstName,
         last_name: formData.lastName,
@@ -315,14 +305,12 @@ const ProfileSetup: React.FC = () => {
       let result;
       
       if (existingProfile) {
-        // Update existing profile
         result = await supabase
           .from('users')
           .update(profileData)
           .eq('id', user.id)
           .select();
       } else {
-        // Insert new profile
         result = await supabase
           .from('users')
           .insert([profileData])
@@ -334,7 +322,6 @@ const ProfileSetup: React.FC = () => {
       if (error) {
         console.error('Error saving profile:', error);
         if (error.code === '23505') {
-          // Unique constraint violation
           setErrors({ username: 'Username is already taken' });
         } else {
           alert(`Error saving profile: ${error.message}`);
@@ -345,9 +332,6 @@ const ProfileSetup: React.FC = () => {
       console.log('Profile saved:', data);
       alert(existingProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
       
-      // TODO: Redirect to dashboard or next step
-      // window.location.href = '/dashboard';
-      
     } catch (err) {
       console.error('Unexpected error:', err);
       alert('An unexpected error occurred. Please try again.');
@@ -356,7 +340,6 @@ const ProfileSetup: React.FC = () => {
     }
   };
 
-  // Show loading state while checking authentication and loading profile
   if (!ready || isLoadingProfile) {
     return (
       <div className="min-h-screen bg-black text-gray-100 flex items-center justify-center">
@@ -368,7 +351,6 @@ const ProfileSetup: React.FC = () => {
     );
   }
 
-  // Show message if user is not authenticated
   if (!user) {
     return (
       <div className="min-h-screen bg-black text-gray-100 flex items-center justify-center">
@@ -392,7 +374,7 @@ const ProfileSetup: React.FC = () => {
           <p className="text-gray-400 text-xl">
             {existingProfile 
               ? 'Make changes to your profile information below.'
-              : 'It takes less than a minute to start earning in global standards.'}
+              : `Set up your ${userType} profile - it takes less than a minute.`}
           </p>
         </div>
 
@@ -579,7 +561,6 @@ const ProfileSetup: React.FC = () => {
               </div>
             </div>
             <div className="space-y-3">
-              {/* Twitter/X */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
                   <X className="w-5 h-5 text-gray-500" />
@@ -595,7 +576,6 @@ const ProfileSetup: React.FC = () => {
                 />
               </div>
 
-              {/* Instagram */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
                   <Instagram className="w-5 h-5 text-gray-500" />
@@ -611,7 +591,6 @@ const ProfileSetup: React.FC = () => {
                 />
               </div>
 
-              {/* YouTube */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
                   <Youtube className="w-5 h-5 text-gray-500" />
@@ -627,7 +606,6 @@ const ProfileSetup: React.FC = () => {
                 />
               </div>
 
-              {/* TikTok */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
                   <svg className="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
