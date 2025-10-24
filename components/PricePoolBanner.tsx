@@ -1,5 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+interface Campaign {
+  id: string;
+  prize: number;
+}
 
 interface PrizePool {
   id: string;
@@ -7,27 +13,63 @@ interface PrizePool {
   projectName: string;
 }
 
-const prizePools: PrizePool[] = [
-  { id: 'proj_001', amount: '$2000', projectName: 'PROJECT 1' },
-  { id: 'proj_002', amount: '$2000', projectName: 'PROJECT 2' },
-  { id: 'proj_003', amount: '$2000', projectName: 'PROJECT 3' },
-  { id: 'proj_004', amount: '$2000', projectName: 'PROJECT 4' },
-  { id: 'proj_005', amount: '$2000', projectName: 'PROJECT 5' },
-  { id: 'proj_006', amount: '$2000', projectName: 'PROJECT 6' },
-];
-
 const PrizePoolBanner: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
+  const [prizePools, setPrizePools] = useState<PrizePool[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handlePrizeClick = (projectId: string) => {
-    window.location.href = `/project?projectid=${projectId}`;
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('campaign')
+          .select('id, prize')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching campaigns:', error);
+          return;
+        }
+
+        if (data) {
+          const pools: PrizePool[] = data.map((campaign: Campaign, index: number) => ({
+            id: campaign.id,
+            amount: `$${campaign.prize.toLocaleString()}`,
+            projectName: `PROJECT ${index + 1}`,
+          }));
+          setPrizePools(pools);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  const handlePrizeClick = (campaignId: string) => {
+    window.location.href = `/campaign/${campaignId}`;
   };
+
+  // Show loading state or empty state
+  if (loading || prizePools.length === 0) {
+    return (
+      <div className="w-full overflow-hidden py-2" style={{ backgroundColor: '#ff7a66' }}>
+        <div className="text-white text-sm font-medium text-center">
+          {loading ? 'Loading...' : 'No campaigns available'}
+        </div>
+      </div>
+    );
+  }
 
   // Duplicate the array to create seamless loop
   const duplicatedPools = [...prizePools, ...prizePools, ...prizePools];
 
   return (
-    <div className="w-full bg-black overflow-hidden py-2">
+    <div className="w-full overflow-hidden py-2" style={{ backgroundColor: '#ff7a66' }}>
       <div
         className="flex gap-0"
         style={{
