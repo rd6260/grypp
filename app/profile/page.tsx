@@ -154,7 +154,7 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-bold text-white">Profile Information</h1>
                 <button
-                  onClick={() => router.push('/profile/edit')}
+                  onClick={() => router.push('/onboarding')}
                   className="flex items-center gap-2 px-4 py-2 bg-[#ff7a66] text-white rounded-lg hover:bg-[#ff8c7a] transition-colors"
                 >
                   <Edit2 className="w-4 h-4" />
