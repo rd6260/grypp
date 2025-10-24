@@ -23,9 +23,11 @@ const AVAILABLE_SKILLS: Skill[] = [
 // Add UserType prop
 interface ProfileSetupProps {
   userType: 'creator' | 'clipper';
+  redirectPath?: string;
+  onUpdateComplete?: () => void;
 }
 
-const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
+const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType, redirectPath = '/', onUpdateComplete}) => {
   const { user, ready } = usePrivy();
   const router = useRouter();
 
@@ -335,7 +337,8 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
       console.log('Profile saved:', data);
       // alert(existingProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
 
-      router.push('/')
+      onUpdateComplete?.();
+      router.push(redirectPath);
 
     } catch (err) {
       console.error('Unexpected error:', err);

@@ -8,6 +8,18 @@ import { createClient } from '@/lib/supabase/client';
 
 import WalletSection from '@/components/WalletSection';
 
+// --- ADDED TYPE DEFINITIONS ---
+// Define the possible user types from Supabase
+type UserType = 'clipper' | 'creator' | 'admin';
+
+// Create a display mapping for presentation
+const userTypeDisplay: Record<UserType, string> = {
+  clipper: 'Clipper',
+  creator: 'Creator',
+  admin: 'Admin',
+};
+// --- END ADDED TYPE DEFINITIONS ---
+
 type Section = 'profile' | 'wallet';
 
 interface ProfileData {
@@ -16,6 +28,7 @@ interface ProfileData {
   last_name: string;
   username: string;
   region: string;
+  type: UserType; // <-- ADDED THIS
   pfp_url?: string;
   interests?: string[];
   x?: string;
@@ -44,7 +57,7 @@ const ProfilePage: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('users')
-          .select('*')
+          .select('*') // This will now fetch the 'type' column as well
           .eq('id', user.id)
           .single();
 
@@ -154,7 +167,7 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-bold text-white">Profile Information</h1>
                 <button
-                  onClick={() => router.push('/onboarding')}
+                  onClick={() => router.push('/profile/edit')}
                   className="flex items-center gap-2 px-4 py-2 bg-[#ff7a66] text-white rounded-lg hover:bg-[#ff8c7a] transition-colors"
                 >
                   <Edit2 className="w-4 h-4" />
@@ -163,7 +176,26 @@ const ProfilePage: React.FC = () => {
               </div>
 
               {/* Profile Card */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+              {/* --- MODIFIED: Added 'relative' --- */}
+              <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+                
+                {/* --- ADDED BADGE HERE --- */}
+                {/* User Type Badge */}
+                {profileData?.type && (
+                  <span 
+                    className={`absolute top-8 right-8 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium border ${
+                      profileData.type === 'admin' 
+                        ? 'bg-red-900/50 text-red-300 border-red-700' 
+                        : profileData.type === 'creator' 
+                        ? 'bg-purple-900/50 text-purple-300 border-purple-700'
+                        : 'bg-zinc-800 text-gray-300 border-zinc-700'
+                    }`}
+                  >
+                    {userTypeDisplay[profileData.type]}
+                  </span>
+                )}
+                {/* --- END BADGE --- */}
+
                 <div className="flex items-start gap-6 mb-8">
                   {/* Profile Picture */}
                   <div className="relative">
@@ -228,7 +260,7 @@ const ProfilePage: React.FC = () => {
                     )}
                     {profileData?.instagram && (
                       <a
-                        href={`https://instagram.com/${profileData.instagram}`}
+                        href={`httpshttps://instagram.com/${profileData.instagram}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg hover:border-zinc-600 transition-colors group"
