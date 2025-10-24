@@ -187,7 +187,7 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
+      <div className="min-h-screen p-8 mx-8 rounded-3xl">
         <div className="max-w-[1700px] mx-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-2">Active Bounties</h1>
@@ -201,7 +201,7 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
   }
 
   return (
-    <div className="min-h-screen p-8 mx-8 rounded-3xl border border-gray-600">
+    <div className="min-h-screen p-8 mx-8 rounded-3xl">
       <div className="max-w-[1700px] mx-auto">
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2">Active Bounties</h1>

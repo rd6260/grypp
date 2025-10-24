@@ -94,7 +94,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
             setProfileImage(data.pfp_url);
           } else {
             const { data: urlData } = supabase.storage
-              .from('pfp')
+              .from('pfp/user')
               .getPublicUrl(user.id);
 
             if (urlData?.publicUrl) {
@@ -206,7 +206,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
 
     try {
       const { error: deleteError } = await supabase.storage
-        .from('pfp')
+        .from('pfp/user')
         .remove([userId]);
 
       if (deleteError && deleteError.message !== 'Object not found') {
@@ -214,7 +214,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
       }
 
       const { error: uploadError } = await supabase.storage
-        .from('pfp')
+        .from('pfp/user')
         .upload(userId, profileImageFile, {
           cacheControl: '3600',
           upsert: true
@@ -226,7 +226,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ userType }) => {
       }
 
       const { data: urlData } = supabase.storage
-        .from('pfp')
+        .from('pfp/user')
         .getPublicUrl(userId);
 
       return urlData.publicUrl;

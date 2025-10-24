@@ -469,7 +469,7 @@ const ClipSubmissions = () => {
                       </span>
                     </div>
                     <span className="text-[#ff7a66] font-bold">
-                      ${submission.campaign?.prize || 0}
+                      ${((submission.campaign?.total_views || 0) / 1000000 * (submission.campaign?.money_per_million_views || 0)).toFixed(2)}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500">

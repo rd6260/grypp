@@ -1,7 +1,7 @@
 export default function CreativityHero() {
   return (
     <div className="w-full py-8">
-      <div className="w-full rounded-3xl shadow-sm border border-gray-800 py-12 px-8 text-center" style={{ backgroundColor: '#0B0B0B' }}>
+      <div className="w-full rounded-3xl shadow-sm py-12 px-8 text-center" style={{ backgroundColor: '#0B0B0B' }}>
         <h1 className="text-7xl font-serif mb-3 leading-tight text-white">
           Your creativity,
           <br />
