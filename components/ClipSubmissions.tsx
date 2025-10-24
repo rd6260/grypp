@@ -461,7 +461,13 @@ const ClipSubmissions = () => {
               {/* Performance */}
               <div className="col-span-2">
                 <div className="px-3 py-1.5 bg-zinc-800 border border-[#ff7a66] rounded-lg">
-                  <div className="flex items-center justify-between gap-3 mb-1">
+                  {/* CHANGED CLASSES:
+      - Removed 'items-center', 'justify-between', 'gap-3'
+      - Added 'flex-col' to stack items vertically
+      - Added 'items-start' to align them to the left
+      - Added 'gap-1' for a small space between the new lines
+    */}
+                  <div className="flex flex-col items-start gap-1 mb-1">
                     <div className="flex items-center gap-2">
                       <Trophy className="w-4 h-4 text-[#ff7a66]" />
                       <span className="text-white font-semibold">
