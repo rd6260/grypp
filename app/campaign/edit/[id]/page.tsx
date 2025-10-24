@@ -1,7 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Upload, X, Send, Sparkles, AlertCircle, Loader2, DollarSign, Eye, Trophy, Tag } from 'lucide-react';
+import {
+  Upload,
+  X,
+  Send,
+  Sparkles,
+  AlertCircle,
+  Loader2,
+  DollarSign,
+  Eye,
+  Trophy,
+  Tag,
+  Link, // Added
+} from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter, useParams } from 'next/navigation';
@@ -22,7 +34,10 @@ const CATEGORY_OPTIONS = [
 interface CampaignFormData {
   title: string;
   description: string;
+  resource: string; // Added
   money_per_million_views: string;
+  prize: string; // Added
+  max_payout_per_video: string; // Added
   content_type_tags: string[];
   category_tags: string[];
   status: boolean;
@@ -38,7 +53,10 @@ const CampaignEditPage: React.FC = () => {
   const [formData, setFormData] = useState<CampaignFormData>({
     title: '',
     description: '',
+    resource: '', // Added
     money_per_million_views: '',
+    prize: '', // Added
+    max_payout_per_video: '', // Added
     content_type_tags: [],
     category_tags: [],
     status: true,
@@ -92,7 +110,11 @@ const CampaignEditPage: React.FC = () => {
         setFormData({
           title: data.title || '',
           description: data.description || '',
-          money_per_million_views: data.money_per_million_views?.toString() || '',
+          resource: data.resource || '', // Added
+          money_per_million_views:
+            data.money_per_million_views?.toString() || '',
+          prize: data.prize?.toString() || '', // Added
+          max_payout_per_video: data.max_payout_per_video?.toString() || '', // Added
           content_type_tags: data.content_type_tags || [],
           category_tags: data.category_tags || [],
           status: data.status ?? true,
@@ -113,7 +135,9 @@ const CampaignEditPage: React.FC = () => {
     loadCampaign();
   }, [campaignId, user?.id, ready, isNewCampaign]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
@@ -151,7 +175,10 @@ const CampaignEditPage: React.FC = () => {
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, image: 'Image size must be less than 5MB' }));
+        setErrors(prev => ({
+          ...prev,
+          image: 'Image size must be less than 5MB',
+        }));
         return;
       }
 
@@ -174,13 +201,15 @@ const CampaignEditPage: React.FC = () => {
     }
 
     try {
-      const fileName = `campaign_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-      
+      const fileName = `campaign_${Date.now()}_${Math.random()
+        .toString(36)
+        .substring(7)}`;
+
       const { error: uploadError } = await supabase.storage
         .from('pfp')
         .upload(`campaign/${fileName}`, imageFile, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
         });
 
       if (uploadError) {
@@ -210,9 +239,38 @@ const CampaignEditPage: React.FC = () => {
       newErrors.description = 'Description is required';
     }
 
+    // Added: Resource validation (optional, but must be URL if present)
+    if (formData.resource.trim()) {
+      try {
+        new URL(formData.resource);
+      } catch (_) {
+        newErrors.resource = 'Please enter a valid URL (e.g., https://...)';
+      }
+    }
+
     const moneyValue = parseFloat(formData.money_per_million_views);
-    if (!formData.money_per_million_views || isNaN(moneyValue) || moneyValue <= 0) {
+    if (
+      !formData.money_per_million_views ||
+      isNaN(moneyValue) ||
+      moneyValue <= 0
+    ) {
       newErrors.money_per_million_views = 'Please enter a valid amount';
+    }
+
+    // Added: Prize validation (optional, but must be non-negative if present)
+    const prizeValue = parseFloat(formData.prize);
+    if (formData.prize && (isNaN(prizeValue) || prizeValue < 0)) {
+      newErrors.prize = 'Please enter a valid prize amount (0 or more)';
+    }
+
+    // Added: Max Payout validation (required, positive)
+    const maxPayoutValue = parseFloat(formData.max_payout_per_video);
+    if (
+      !formData.max_payout_per_video ||
+      isNaN(maxPayoutValue) ||
+      maxPayoutValue <= 0
+    ) {
+      newErrors.max_payout_per_video = 'Please enter a valid max payout amount';
     }
 
     if (formData.content_type_tags.length === 0) {
@@ -249,15 +307,19 @@ const CampaignEditPage: React.FC = () => {
         creator_id: user.id,
         title: formData.title,
         description: formData.description,
+        resource: formData.resource.trim() || null, // Added
         image: imageUrl,
         money_per_million_views: parseInt(formData.money_per_million_views),
+        prize: parseInt(formData.prize) || 0, // Added
+        max_payout_per_video: parseInt(formData.max_payout_per_video), // Added
         content_type_tags: formData.content_type_tags,
-        category_tags: formData.category_tags.length > 0 ? formData.category_tags : null,
+        category_tags:
+          formData.category_tags.length > 0 ? formData.category_tags : null,
         status: formData.status,
         entries: 0,
         total_views: 0,
         paid: 0,
-        prize: 0,
+        // prize: 0, // Removed, handled above
       };
 
       let result;
@@ -268,7 +330,8 @@ const CampaignEditPage: React.FC = () => {
           .insert([campaignData])
           .select();
       } else {
-        const { entries, total_views, paid, prize, ...updateData } = campaignData;
+        // Modified: removed 'prize' from destructuring
+        const { entries, total_views, paid, ...updateData } = campaignData;
         result = await supabase
           .from('campaign')
           .update(updateData)
@@ -285,9 +348,12 @@ const CampaignEditPage: React.FC = () => {
       }
 
       console.log('Campaign saved:', data);
-      alert(isNewCampaign ? 'Campaign created successfully!' : 'Campaign updated successfully!');
+      alert(
+        isNewCampaign
+          ? 'Campaign created successfully!'
+          : 'Campaign updated successfully!'
+      );
       router.push('/');
-
     } catch (err) {
       console.error('Unexpected error:', err);
       alert('An unexpected error occurred. Please try again.');
@@ -312,8 +378,12 @@ const CampaignEditPage: React.FC = () => {
       <div className="min-h-screen bg-black text-gray-100 flex items-center justify-center">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-[#ff7a66] mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Authentication Required</h2>
-          <p className="text-gray-400">Please log in to create or edit campaigns.</p>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Authentication Required
+          </h2>
+          <p className="text-gray-400">
+            Please log in to create or edit campaigns.
+          </p>
         </div>
       </div>
     );
@@ -346,7 +416,11 @@ const CampaignEditPage: React.FC = () => {
                 className="w-32 h-32 rounded-lg border-2 border-dashed border-[#ff7a66] flex items-center justify-center cursor-pointer hover:border-[#ff8c7a] transition-colors bg-zinc-900 overflow-hidden"
               >
                 {campaignImage ? (
-                  <img src={campaignImage} alt="Campaign" className="w-full h-full object-cover" />
+                  <img
+                    src={campaignImage}
+                    alt="Campaign"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="text-center">
                     <Upload className="w-8 h-8 text-[#ff7a66] mx-auto mb-2" />
@@ -363,9 +437,12 @@ const CampaignEditPage: React.FC = () => {
               />
               <div className="flex-1">
                 <p className="text-sm text-gray-400 mb-2">
-                  Upload a compelling image for your campaign. This will be the first thing people see.
+                  Upload a compelling image for your campaign. This will be the
+                  first thing people see.
                 </p>
-                <p className="text-xs text-gray-500">Recommended: 1200x630px, max 5MB</p>
+                <p className="text-xs text-gray-500">
+                  Recommended: 1200x630px, max 5MB
+                </p>
               </div>
             </div>
             {errors.image && (
@@ -422,6 +499,30 @@ const CampaignEditPage: React.FC = () => {
             )}
           </div>
 
+          {/* Resource Link (NEW) */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              Resource Link (Optional)
+            </label>
+            <input
+              type="text"
+              name="resource"
+              value={formData.resource}
+              onChange={handleInputChange}
+              placeholder="e.g., https://drive.google.com/..."
+              className={`w-full px-4 py-3 bg-zinc-900 border ${
+                errors.resource ? 'border-red-500' : 'border-zinc-800'
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+            />
+            {errors.resource && (
+              <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.resource}
+              </p>
+            )}
+          </div>
+
           {/* Money Per Million Views */}
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
@@ -436,13 +537,68 @@ const CampaignEditPage: React.FC = () => {
               placeholder="e.g., 500"
               min="1"
               className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.money_per_million_views ? 'border-red-500' : 'border-zinc-800'
+                errors.money_per_million_views
+                  ? 'border-red-500'
+                  : 'border-zinc-800'
               } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.money_per_million_views && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
                 <AlertCircle className="w-4 h-4" />
                 {errors.money_per_million_views}
+              </p>
+            )}
+          </div>
+
+          {/* Prize (NEW) */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              Prize Pool (USD) (Optional)
+            </label>
+            <input
+              type="number"
+              name="prize"
+              value={formData.prize}
+              onChange={handleInputChange}
+              placeholder="e.g., 1000"
+              min="0"
+              className={`w-full px-4 py-3 bg-zinc-900 border ${
+                errors.prize ? 'border-red-500' : 'border-zinc-800'
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+            />
+            {errors.prize && (
+              <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.prize}
+              </p>
+            )}
+          </div>
+
+          {/* Max Payout Per Video (NEW) */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Max Payout Per Video (USD){' '}
+              <span className="text-[#ff7a66]">*</span>
+            </label>
+            <input
+              type="number"
+              name="max_payout_per_video"
+              value={formData.max_payout_per_video}
+              onChange={handleInputChange}
+              placeholder="e.g., 100"
+              min="1"
+              className={`w-full px-4 py-3 bg-zinc-900 border ${
+                errors.max_payout_per_video
+                  ? 'border-red-500'
+                  : 'border-zinc-800'
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+            />
+            {errors.max_payout_per_video && (
+              <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {errors.max_payout_per_video}
               </p>
             )}
           </div>
@@ -507,12 +663,16 @@ const CampaignEditPage: React.FC = () => {
                 Campaign Status
               </label>
               <p className="text-sm text-gray-500">
-                {formData.status ? 'Campaign is open for entries' : 'Campaign is closed'}
+                {formData.status
+                  ? 'Campaign is open for entries'
+                  : 'Campaign is closed'}
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setFormData(prev => ({ ...prev, status: !prev.status }))}
+              onClick={() =>
+                setFormData(prev => ({ ...prev, status: !prev.status }))
+              }
               className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
                 formData.status ? 'bg-[#ff7a66]' : 'bg-zinc-700'
               }`}

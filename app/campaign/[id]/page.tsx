@@ -2,12 +2,12 @@
 
 import { useParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Eye, 
-  Users, 
-  CheckCircle2, 
+import {
+  ArrowLeft,
+  Calendar,
+  Eye,
+  Users,
+  CheckCircle2,
   XCircle,
   Target,
   FileVideo,
@@ -41,6 +41,7 @@ interface Campaign {
   category_tags: string[];
   status: boolean;
   resource: string | null;
+  max_payout_per_video: number;
 }
 
 interface SupabaseError {
@@ -72,7 +73,7 @@ function ProjectDetailsContent() {
     const fetchCampaign = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch campaign details
         const { data: campaignData, error: campaignError } = await supabase
           .from('campaign')
@@ -137,13 +138,13 @@ function ProjectDetailsContent() {
       alert('Submission successful!');
       setShowSubmitModal(false);
       setContentUrl('');
-      
+
       // Refresh submission count
       const { count } = await supabase
         .from('submissions')
         .select('*', { count: 'exact', head: true })
         .eq('campaign_id', projectId);
-      
+
       setSubmissionCount(count || 0);
     } catch (err) {
       const error = err as SupabaseError;
@@ -190,13 +191,13 @@ function ProjectDetailsContent() {
   return (
     <div className="min-h-screen bg-[#0b0b0b]">
       <div className='px-4 py-2'>
-        <NavigationBar/>
+        <NavigationBar />
       </div>
-      
+
       {/* Main Content */}
       <main className="max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <button 
+          <button
             onClick={() => window.history.back()}
             className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors"
           >
@@ -336,12 +337,20 @@ function ProjectDetailsContent() {
                     <div className="text-lg font-medium">${payPerThousandViews}</div>
                   </div>
 
-                  <div className="col-span-2">
+                  <div>
                     <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
                       <DollarSign className="w-4 h-4" />
                       Per Million Views
                     </div>
                     <div className="text-lg font-medium">${campaign.money_per_million_views.toLocaleString()}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-gray-400 text-sm mb-1 flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4" />
+                      Max Payout Per Video
+                    </div>
+                    <div className="text-lg font-medium">${campaign.max_payout_per_video.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -377,14 +386,13 @@ function ProjectDetailsContent() {
 
               {/* Submit Button */}
               <div className='bg-[#0b0b0b] p-3 rounded-lg mt-6'>
-                <button 
+                <button
                   onClick={handleSubmitClick}
                   disabled={!isOpen}
-                  className={`w-full py-2 font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${
-                    isOpen 
+                  className={`w-full py-2 font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${isOpen
                       ? 'bg-[#ff7a66] text-white hover:bg-[#ff8c7a] shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)]'
                       : 'bg-zinc-700 text-gray-400 cursor-not-allowed'
-                  }`}
+                    }`}
                 >
                   <Send className="w-4 h-4" />
                   {!authenticated ? 'Login to Submit' : isOpen ? 'Submit Entry' : 'Campaign Closed'}
@@ -402,7 +410,7 @@ function ProjectDetailsContent() {
                 <p className="text-sm text-gray-400 mb-4">
                   Access brand assets, guidelines, and reference materials
                 </p>
-                <a 
+                <a
                   href={campaign.resource}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -425,7 +433,7 @@ function ProjectDetailsContent() {
           <div className="bg-[#171719] rounded-lg p-6 max-w-md w-full border border-zinc-800">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-medium text-white">Submit Your Content</h3>
-              <button 
+              <button
                 onClick={() => setShowSubmitModal(false)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
@@ -459,11 +467,10 @@ function ProjectDetailsContent() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !contentUrl.trim()}
-                className={`flex-1 py-2 font-medium rounded-lg transition-all ${
-                  submitting || !contentUrl.trim()
+                className={`flex-1 py-2 font-medium rounded-lg transition-all ${submitting || !contentUrl.trim()
                     ? 'bg-zinc-700 text-gray-400 cursor-not-allowed'
                     : 'bg-[#ff7a66] text-white hover:bg-[#ff8c7a] shadow-[0_0_20px_rgba(255,122,102,0.5)]'
-                }`}
+                  }`}
               >
                 {submitting ? 'Submitting...' : 'Submit'}
               </button>
