@@ -57,11 +57,18 @@ export default function NavigationBar() {
     router.push('/admin')
   }
 
+  const handleHomeClick = () => {
+    router.push('/')
+  }
+
   return (
     <nav className="bg-white text-gray-900 px-6 py-1 rounded-lg border border-gray-200">
       <div className="flex items-center justify-between">
         {/* Logo and Brand */}
-        <div className="flex items-center gap-3">
+        <div 
+          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleHomeClick}
+        >
           <div className="w-6 h-6 flex items-center justify-center">
             <svg width="1288" height="1288" viewBox="0 0 1288 1288" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_166_16)">

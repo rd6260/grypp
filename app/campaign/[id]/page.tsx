@@ -43,6 +43,13 @@ interface Campaign {
   resource: string | null;
 }
 
+interface SupabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
 function ProjectDetailsContent() {
   const params = useParams();
   const projectId = params.id as string;
@@ -86,8 +93,9 @@ function ProjectDetailsContent() {
         if (countError) throw countError;
 
         setSubmissionCount(count || 0);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        const error = err as SupabaseError;
+        setError(error.message);
         console.error('Error fetching campaign:', err);
       } finally {
         setLoading(false);
@@ -137,8 +145,9 @@ function ProjectDetailsContent() {
         .eq('campaign_id', projectId);
       
       setSubmissionCount(count || 0);
-    } catch (err: any) {
-      alert('Error submitting: ' + err.message);
+    } catch (err) {
+      const error = err as SupabaseError;
+      alert('Error submitting: ' + error.message);
       console.error('Error submitting:', err);
     } finally {
       setSubmitting(false);
