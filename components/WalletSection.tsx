@@ -57,7 +57,7 @@ const WalletSection: React.FC = () => {
   // Fetch wallet balance
   const fetchBalance = async () => {
     if (!embeddedWallet) return;
-    
+
     setIsLoadingBalance(true);
     try {
       const balance = await publicClient.getBalance({
@@ -74,7 +74,7 @@ const WalletSection: React.FC = () => {
   // Fetch USDC balance
   const fetchUsdcBalance = async () => {
     if (!embeddedWallet) return;
-    
+
     setIsLoadingUsdc(true);
     try {
       const balance = await publicClient.readContract({
@@ -82,7 +82,7 @@ const WalletSection: React.FC = () => {
         abi: USDC_ABI,
         functionName: 'balanceOf',
         args: [embeddedWallet.address as `0x${string}`],
-      });
+      }) as bigint; // Add this type assertion
       setUsdcBalance(formatUnits(balance, 6)); // USDC has 6 decimals
     } catch (error) {
       console.error('Error fetching USDC balance:', error);
@@ -101,7 +101,7 @@ const WalletSection: React.FC = () => {
   // Copy address to clipboard
   const copyAddress = async () => {
     if (!embeddedWallet) return;
-    
+
     try {
       await navigator.clipboard.writeText(embeddedWallet.address);
       setCopiedAddress(true);
@@ -142,7 +142,7 @@ const WalletSection: React.FC = () => {
           <p className="text-gray-400 mb-6 max-w-md mx-auto">
             Create your embedded wallet to start using crypto features, manage USDC, and interact with Web3 applications.
           </p>
-          
+
           {walletError && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg max-w-md mx-auto">
               <p className="text-sm text-red-400">{walletError}</p>
