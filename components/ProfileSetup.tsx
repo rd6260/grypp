@@ -16,7 +16,7 @@ const AVAILABLE_SKILLS: Skill[] = [
   { id: 'streaming', name: 'Streaming' },
   { id: 'Crypto', name: 'Crypto' },
   { id: 'podcast', name: 'Podcast' },
-  { id: 'interview', name: 'InterView' },
+  { id: 'interview', name: 'Interview' },
   { id: 'gaming', name: 'Gaming' },
 ];
 
