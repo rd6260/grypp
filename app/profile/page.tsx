@@ -10,13 +10,27 @@ import WalletSection from '@/components/WalletSection';
 
 type Section = 'profile' | 'wallet';
 
+interface ProfileData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  region: string;
+  pfp_url?: string;
+  interests?: string[];
+  x?: string;
+  instagram?: string;
+  youtube?: string;
+  tiktok?: string;
+}
+
 const ProfilePage: React.FC = () => {
   const { user, ready, authenticated, logout } = usePrivy();
   const router = useRouter();
   const supabase = createClient();
 
   const [activeSection, setActiveSection] = useState<Section>('profile');
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   // Load profile data
@@ -41,7 +55,7 @@ const ProfilePage: React.FC = () => {
         }
 
         if (data) {
-          setProfileData(data);
+          setProfileData(data as ProfileData);
         }
       } catch (err) {
         console.error('Unexpected error loading profile:', err);
@@ -51,7 +65,7 @@ const ProfilePage: React.FC = () => {
     };
 
     loadProfile();
-  }, [user?.id, ready]);
+  }, [user?.id, ready, supabase]);
 
   // Handle logout
   const handleLogout = async () => {
