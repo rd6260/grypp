@@ -1,7 +1,6 @@
 import CreativityHero from '@/components/CreativityHeor';
 import NavigationBar from '@/components/GryppBar';
 import PrizePoolBanner from '@/components/PricePoolBanner';
-import BountyCard from '@/components/BountyCard';
 import ActiveBounties from '@/components/ActiveBounties';
 
 export default function Home() {

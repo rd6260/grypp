@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 
 import NavigationBar from '@/components/GryppBar';
-import { UserTypeSelection } from '@/components/UserTypeSelection';
 
 
 function ProjectDetailsContent() {
