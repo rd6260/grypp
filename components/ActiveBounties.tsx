@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Eye } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 
 const supabase = createClient();
@@ -26,6 +27,7 @@ interface Campaign {
 }
 
 interface BountyCardProps {
+  id: string;
   title: string;
   description: string;
   imageUrl: string;
@@ -41,6 +43,7 @@ interface BountyCardProps {
 }
 
 const BountyCard: React.FC<BountyCardProps> = ({
+  id,
   title,
   description,
   imageUrl,
@@ -54,6 +57,8 @@ const BountyCard: React.FC<BountyCardProps> = ({
   categoryTags,
   status = 'open'
 }) => {
+  const router = useRouter();
+
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
       return `${(num / 1000000).toFixed(1)}m`;
@@ -75,8 +80,8 @@ const BountyCard: React.FC<BountyCardProps> = ({
       {/* Title and Description with Logo */}
       <div className="flex items-start gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ff7a66] to-[#ff5544] flex-shrink-0 overflow-hidden">
-          <img 
-            src={imageUrl || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"} 
+          <img
+            src={imageUrl || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"}
             alt="Profile"
             className="w-full h-full object-cover"
           />
@@ -119,7 +124,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
           <span className="text-gray-400 text-xs">Progress</span>
         </div>
         <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
             style={{ width: `${progressPercentage}%` }}
           ></div>
@@ -127,7 +132,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
       </div>
 
       {/* Button */}
-      <button className="w-full py-3 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2">
+      <button onClick={() => router.push(`/campaign/${id}`)} className="w-full py-3 bg-[#ff7a66] text-white font-medium rounded-lg hover:bg-[#ff8c7a] transition-all shadow-[0_0_20px_rgba(255,122,102,0.5)] hover:shadow-[0_0_30px_rgba(255,122,102,0.7)] flex items-center justify-center gap-2">
         <Eye className="w-4 h-4" />
         View Details
       </button>
@@ -206,15 +211,15 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2">Active Bounties</h1>
         </div>
-        
-        <div 
+
+        <div
           className="grid gap-6"
           style={{
             gridTemplateColumns: `repeat(${cardsPerRow}, minmax(0, 1fr))`
           }}
         >
           {campaigns.map((campaign) => (
-            <BountyCard 
+            <BountyCard
               key={campaign.id}
               title={campaign.title}
               description={campaign.description}

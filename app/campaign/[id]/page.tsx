@@ -22,7 +22,8 @@ import {
 } from 'lucide-react';
 
 import NavigationBar from '@/components/GryppBar';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
+import { usePrivy } from '@privy-io/react-auth';
 
 interface Campaign {
   id: string;
@@ -45,7 +46,8 @@ interface Campaign {
 function ProjectDetailsContent() {
   const params = useParams();
   const projectId = params.id as string;
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
+  const { authenticated, user, login } = usePrivy();
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,18 +56,9 @@ function ProjectDetailsContent() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [contentUrl, setContentUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
 
-  // Fetch user session
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUserId(session.user.id);
-      }
-    };
-    getUser();
-  }, [supabase]);
+  // Get Privy user ID
+  const userId = user?.id || null;
 
   // Fetch campaign data
   useEffect(() => {
@@ -112,8 +105,9 @@ function ProjectDetailsContent() {
       return;
     }
 
-    if (!userId) {
+    if (!authenticated || !userId) {
       alert('Please login to submit');
+      login();
       return;
     }
 
@@ -149,6 +143,14 @@ function ProjectDetailsContent() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleSubmitClick = () => {
+    if (!authenticated) {
+      login();
+      return;
+    }
+    setShowSubmitModal(true);
   };
 
   if (loading) {
@@ -367,7 +369,7 @@ function ProjectDetailsContent() {
               {/* Submit Button */}
               <div className='bg-[#0b0b0b] p-3 rounded-lg mt-6'>
                 <button 
-                  onClick={() => setShowSubmitModal(true)}
+                  onClick={handleSubmitClick}
                   disabled={!isOpen}
                   className={`w-full py-2 font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${
                     isOpen 
@@ -376,7 +378,7 @@ function ProjectDetailsContent() {
                   }`}
                 >
                   <Send className="w-4 h-4" />
-                  {isOpen ? 'Submit Entry' : 'Campaign Closed'}
+                  {!authenticated ? 'Login to Submit' : isOpen ? 'Submit Entry' : 'Campaign Closed'}
                 </button>
               </div>
             </div>
