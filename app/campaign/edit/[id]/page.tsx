@@ -9,18 +9,14 @@ import { useRouter, useParams } from 'next/navigation';
 const CONTENT_TYPE_OPTIONS = ['Clipping', 'Logo display', 'Video content'];
 
 const CATEGORY_OPTIONS = [
+  'AI',
+  'Tech',
+  'Web3',
+  'Streaming',
+  'Crypto',
+  'Podcast',
+  'Interview',
   'Gaming',
-  'Entertainment',
-  'Education',
-  'Technology',
-  'Music',
-  'Sports',
-  'Lifestyle',
-  'Comedy',
-  'Beauty',
-  'Cooking',
-  'Travel',
-  'Fitness',
 ];
 
 interface CampaignFormData {

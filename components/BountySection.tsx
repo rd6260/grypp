@@ -187,7 +187,7 @@ const BountySection = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-3xl font-bold text-white">Campaign Bounties</h2>
           <button
-            onClick={() => router.push('/campaign/create')}
+            onClick={() => router.push('/campaign/edit/new')}
             className="flex items-center gap-2 px-6 py-3 bg-[#ff7a66] text-white rounded-lg border border-[#ff7a66] shadow-[0_0_10px_rgba(255,122,102,0.3)] hover:bg-[#ff6b56] transition-all"
           >
             <Plus className="w-5 h-5" />
