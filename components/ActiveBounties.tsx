@@ -96,19 +96,19 @@ const BountyCard: React.FC<BountyCardProps> = ({
       {/* Stats in one line */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <p className="text-gray-400 text-xs mb-1">Entries</p>
+          <p className="text-gray-400 text-xs mb-[-3]">Entries</p>
           <p className="text-white font-bold text-lg">{entries}</p>
         </div>
         <div>
-          <p className="text-gray-400 text-xs mb-1">Views</p>
+          <p className="text-gray-400 text-xs mb-[-3]">Views</p>
           <p className="text-white font-bold text-lg">{formatNumber(totalViews)}</p>
         </div>
         <div>
-          <p className="text-gray-400 text-xs mb-1">Prize</p>
+          <p className="text-gray-400 text-xs mb-[-3]">Prize</p>
           <p className="text-white font-bold text-lg">{formatCurrency(prize)}</p>
         </div>
         <div>
-          <p className="text-gray-400 text-xs mb-1">Per 1M Views</p>
+          <p className="text-gray-400 text-xs mb-[-3]">Per 1M Views</p>
           <p className="text-white font-bold text-lg">${formatNumber(moneyPerMillionViews)}</p>
         </div>
       </div>

@@ -30,8 +30,8 @@ const helveticaNow = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "Grypp",
-  description: "Grypp is super cool",
+  title: "CLOUT",
+  description: "CLOUT",
 };
 
 export default function RootLayout({
