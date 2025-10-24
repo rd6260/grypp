@@ -10,14 +10,14 @@ interface Skill {
 }
 
 const AVAILABLE_SKILLS: Skill[] = [
-  { id: 'frontend', name: 'Frontend' },
-  { id: 'backend', name: 'Backend' },
-  { id: 'uiux', name: 'UI/UX Design' },
-  { id: 'writing', name: 'Writing' },
-  { id: 'marketing', name: 'Digital Marketing' },
-  { id: 'mobile', name: 'Mobile Development' },
-  { id: 'devops', name: 'DevOps' },
-  { id: 'data', name: 'Data Science' },
+  { id: 'ai', name: 'AI' },
+  { id: 'tech', name: 'Tech' },
+  { id: 'web3', name: 'Web3' },
+  { id: 'streaming', name: 'Streaming' },
+  { id: 'Crypto', name: 'Crypto' },
+  { id: 'podcast', name: 'Podcast' },
+  { id: 'interview', name: 'InterView' },
+  { id: 'gaming', name: 'Gaming' },
 ];
 
 // Add UserType prop
