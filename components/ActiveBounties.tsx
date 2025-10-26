@@ -13,6 +13,7 @@ interface Campaign {
   creator_id: string;
   title: string;
   description: string;
+  tag_line: string;
   image: string;
   money_per_million_views: number;
   entries: number;
@@ -29,7 +30,7 @@ interface Campaign {
 interface BountyCardProps {
   id: string;
   title: string;
-  description: string;
+  tagLine: string;
   imageUrl: string;
   creatorPfp?: string;
   moneyPerMillionViews: number;
@@ -45,7 +46,7 @@ interface BountyCardProps {
 const BountyCard: React.FC<BountyCardProps> = ({
   id,
   title,
-  description,
+  tagLine,
   imageUrl,
   creatorPfp,
   moneyPerMillionViews,
@@ -77,7 +78,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
 
   return (
     <div className="w-full bg-[#1a1a1a] rounded-2xl border border-gray-700 p-6 font-sans">
-      {/* Title and Description with Logo */}
+      {/* Title and Tag Line with Logo */}
       <div className="flex items-start gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ff7a66] to-[#ff5544] flex-shrink-0 overflow-hidden">
           <img 
@@ -88,7 +89,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
         </div>
         <div className="flex-1">
           <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
-          <p className="text-gray-400 text-sm">{description}</p>
+          <p className="text-gray-400 text-sm">{tagLine}</p>
         </div>
         {/* Content Type Tag */}
         {contentTypeTags.length > 0 && (
@@ -206,7 +207,7 @@ const ActiveBounties: React.FC<ActiveBountiesProps> = ({ cardsPerRow = 3 }) => {
               key={campaign.id}
               id={campaign.id}
               title={campaign.title}
-              description={campaign.description}
+              tagLine={campaign.tag_line}
               imageUrl={campaign.image}
               creatorPfp={campaign.creator_pfp}
               moneyPerMillionViews={campaign.money_per_million_views}
