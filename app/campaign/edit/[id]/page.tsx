@@ -34,10 +34,11 @@ const CATEGORY_OPTIONS = [
 interface CampaignFormData {
   title: string;
   description: string;
-  resource: string; // Added
+  tag_line: string;
+  resource: string;
   money_per_million_views: string;
-  prize: string; // Added
-  max_payout_per_video: string; // Added
+  prize: string;
+  max_payout_per_video: string;
   content_type_tags: string[];
   category_tags: string[];
   status: boolean;
@@ -53,10 +54,11 @@ const CampaignEditPage: React.FC = () => {
   const [formData, setFormData] = useState<CampaignFormData>({
     title: '',
     description: '',
-    resource: '', // Added
+    tag_line: '',
+    resource: '',
     money_per_million_views: '',
-    prize: '', // Added
-    max_payout_per_video: '', // Added
+    prize: '',
+    max_payout_per_video: '',
     content_type_tags: [],
     category_tags: [],
     status: true,
@@ -110,11 +112,12 @@ const CampaignEditPage: React.FC = () => {
         setFormData({
           title: data.title || '',
           description: data.description || '',
-          resource: data.resource || '', // Added
+          tag_line: data.tag_line || '',
+          resource: data.resource || '',
           money_per_million_views:
             data.money_per_million_views?.toString() || '',
-          prize: data.prize?.toString() || '', // Added
-          max_payout_per_video: data.max_payout_per_video?.toString() || '', // Added
+          prize: data.prize?.toString() || '',
+          max_payout_per_video: data.max_payout_per_video?.toString() || '',
           content_type_tags: data.content_type_tags || [],
           category_tags: data.category_tags || [],
           status: data.status ?? true,
@@ -239,6 +242,12 @@ const CampaignEditPage: React.FC = () => {
       newErrors.description = 'Description is required';
     }
 
+    if (!formData.tag_line.trim()) {
+      newErrors.tag_line = 'Tag line is required';
+    } else if (formData.tag_line.length > 60) {
+      newErrors.tag_line = 'Tag line must be 60 characters or less';
+    }
+
     // Added: Resource validation (optional, but must be URL if present)
     if (formData.resource.trim()) {
       try {
@@ -307,11 +316,12 @@ const CampaignEditPage: React.FC = () => {
         creator_id: user.id,
         title: formData.title,
         description: formData.description,
-        resource: formData.resource.trim() || null, // Added
+        tag_line: formData.tag_line,
+        resource: formData.resource.trim() || null,
         image: imageUrl,
         money_per_million_views: parseInt(formData.money_per_million_views),
-        prize: parseInt(formData.prize) || 0, // Added
-        max_payout_per_video: parseInt(formData.max_payout_per_video), // Added
+        prize: parseInt(formData.prize) || 0,
+        max_payout_per_video: parseInt(formData.max_payout_per_video),
         content_type_tags: formData.content_type_tags,
         category_tags:
           formData.category_tags.length > 0 ? formData.category_tags : null,
@@ -464,9 +474,8 @@ const CampaignEditPage: React.FC = () => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Enter a catchy campaign title"
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.title ? 'border-red-500' : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.title ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.title && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -474,6 +483,39 @@ const CampaignEditPage: React.FC = () => {
                 {errors.title}
               </p>
             )}
+          </div>
+
+          {/* Tag Line */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              Tag Line <span className="text-[#ff7a66]">*</span>
+            </label>
+            <input
+              type="text"
+              name="tag_line"
+              value={formData.tag_line}
+              onChange={handleInputChange}
+              placeholder="Short, catchy description (max 60 chars)"
+              maxLength={60}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.tag_line ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+            />
+            <div className="flex justify-between items-center mt-1">
+              {errors.tag_line ? (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.tag_line}
+                </p>
+              ) : (
+                <p className="text-xs text-gray-500">
+                  A brief tagline that summarizes your campaign
+                </p>
+              )}
+              <span className={`text-xs ${formData.tag_line.length > 60 ? 'text-red-500' : 'text-gray-500'
+                }`}>
+                {formData.tag_line.length}/60
+              </span>
+            </div>
           </div>
 
           {/* Description */}
@@ -487,9 +529,8 @@ const CampaignEditPage: React.FC = () => {
               onChange={handleInputChange}
               placeholder="Describe your campaign, goals, and what you're looking for..."
               rows={5}
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.description ? 'border-red-500' : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600 resize-none`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.description ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600 resize-none`}
             />
             {errors.description && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -511,9 +552,8 @@ const CampaignEditPage: React.FC = () => {
               value={formData.resource}
               onChange={handleInputChange}
               placeholder="e.g., https://drive.google.com/..."
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.resource ? 'border-red-500' : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.resource ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.resource && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -536,11 +576,10 @@ const CampaignEditPage: React.FC = () => {
               onChange={handleInputChange}
               placeholder="e.g., 500"
               min="1"
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.money_per_million_views
-                  ? 'border-red-500'
-                  : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.money_per_million_views
+                ? 'border-red-500'
+                : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.money_per_million_views && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -563,9 +602,8 @@ const CampaignEditPage: React.FC = () => {
               onChange={handleInputChange}
               placeholder="e.g., 1000"
               min="0"
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.prize ? 'border-red-500' : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.prize ? 'border-red-500' : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.prize && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -589,11 +627,10 @@ const CampaignEditPage: React.FC = () => {
               onChange={handleInputChange}
               placeholder="e.g., 100"
               min="1"
-              className={`w-full px-4 py-3 bg-zinc-900 border ${
-                errors.max_payout_per_video
-                  ? 'border-red-500'
-                  : 'border-zinc-800'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
+              className={`w-full px-4 py-3 bg-zinc-900 border ${errors.max_payout_per_video
+                ? 'border-red-500'
+                : 'border-zinc-800'
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff7a66] focus:border-transparent text-white placeholder-gray-600`}
             />
             {errors.max_payout_per_video && (
               <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
@@ -615,11 +652,10 @@ const CampaignEditPage: React.FC = () => {
                   key={type}
                   type="button"
                   onClick={() => toggleContentType(type)}
-                  className={`px-4 py-2 rounded-lg border transition-all ${
-                    formData.content_type_tags.includes(type)
-                      ? 'bg-[#ff7a66] border-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.4)]'
-                      : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
-                  }`}
+                  className={`px-4 py-2 rounded-lg border transition-all ${formData.content_type_tags.includes(type)
+                    ? 'bg-[#ff7a66] border-[#ff7a66] text-white shadow-[0_0_15px_rgba(255,122,102,0.4)]'
+                    : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
+                    }`}
                 >
                   {type} {formData.content_type_tags.includes(type) ? '✓' : '+'}
                 </button>
@@ -644,11 +680,10 @@ const CampaignEditPage: React.FC = () => {
                   key={category}
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className={`px-3 py-2 rounded-lg border transition-all text-sm ${
-                    formData.category_tags.includes(category)
-                      ? 'bg-[#ff7a66] border-[#ff7a66] text-white'
-                      : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
-                  }`}
+                  className={`px-3 py-2 rounded-lg border transition-all text-sm ${formData.category_tags.includes(category)
+                    ? 'bg-[#ff7a66] border-[#ff7a66] text-white'
+                    : 'bg-zinc-900 border-zinc-800 text-gray-400 hover:border-zinc-700'
+                    }`}
                 >
                   {category}
                 </button>
@@ -673,14 +708,12 @@ const CampaignEditPage: React.FC = () => {
               onClick={() =>
                 setFormData(prev => ({ ...prev, status: !prev.status }))
               }
-              className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                formData.status ? 'bg-[#ff7a66]' : 'bg-zinc-700'
-              }`}
+              className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${formData.status ? 'bg-[#ff7a66]' : 'bg-zinc-700'
+                }`}
             >
               <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                  formData.status ? 'translate-x-7' : 'translate-x-1'
-                }`}
+                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${formData.status ? 'translate-x-7' : 'translate-x-1'
+                  }`}
               />
             </button>
           </div>
