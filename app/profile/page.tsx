@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { User, MapPin, Instagram, Youtube, X, Wallet, ExternalLink, Loader2, AlertCircle, Sparkles, Edit2, LogOut } from 'lucide-react';
+import { ArrowLeft, User, MapPin, Instagram, Youtube, X, Wallet, ExternalLink, Loader2, AlertCircle, Sparkles, Edit2, LogOut } from 'lucide-react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -125,6 +125,16 @@ const ProfilePage: React.FC = () => {
             </h2>
           </div>
 
+          <div className="mb-4">
+            <button
+              onClick={() => router.back()}
+              className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-zinc-800 hover:text-white rounded-lg transition-all"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">Back</span>
+            </button>
+          </div>
+
           <nav className="space-y-2">
             <button
               onClick={() => setActiveSection('profile')}
@@ -178,18 +188,17 @@ const ProfilePage: React.FC = () => {
               {/* Profile Card */}
               {/* --- MODIFIED: Added 'relative' --- */}
               <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-                
+
                 {/* --- ADDED BADGE HERE --- */}
                 {/* User Type Badge */}
                 {profileData?.type && (
-                  <span 
-                    className={`absolute top-8 right-8 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium border ${
-                      profileData.type === 'admin' 
-                        ? 'bg-red-900/50 text-red-300 border-red-700' 
-                        : profileData.type === 'creator' 
-                        ? 'bg-purple-900/50 text-purple-300 border-purple-700'
-                        : 'bg-zinc-800 text-gray-300 border-zinc-700'
-                    }`}
+                  <span
+                    className={`absolute top-8 right-8 inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium border ${profileData.type === 'admin'
+                        ? 'bg-red-900/50 text-red-300 border-red-700'
+                        : profileData.type === 'creator'
+                          ? 'bg-purple-900/50 text-purple-300 border-purple-700'
+                          : 'bg-zinc-800 text-gray-300 border-zinc-700'
+                      }`}
                   >
                     {userTypeDisplay[profileData.type]}
                   </span>
