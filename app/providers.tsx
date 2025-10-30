@@ -1,6 +1,6 @@
 'use client';
 import { PrivyProvider } from '@privy-io/react-auth';
-// import { base } from 'viem/chains';
+import { base } from 'viem/chains';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -11,10 +11,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         appearance: {
           theme: 'dark',
           accentColor: '#ff7a66',
-          walletChainType: 'solana-only',
         },
+        defaultChain: base,
+        supportedChains: [base],
         embeddedWallets: {
-          solana: {
+          ethereum: {
             createOnLogin: 'users-without-wallets',
           },
         },
