@@ -10,6 +10,9 @@ import { base } from 'viem/chains';
 // USDC contract address on Base
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
 
+// chain
+const CHAIN = (process.env.NEXT_PUBLIC_CHAIN as 'base' | 'solana') || 'base';
+
 // USDC ABI (minimal for balanceOf)
 const USDC_ABI = [
   {
@@ -224,7 +227,7 @@ const WalletSection: React.FC = () => {
             <div className="px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-300">Base</span>
+                <span className="text-sm text-gray-300 capitalize">{CHAIN}</span>
               </div>
             </div>
           </div>
@@ -375,7 +378,7 @@ className="w-full py-4 bg-[#ff7a66] text-white font-semibold rounded-lg hover:bg
                     <p className="text-sm font-medium text-blue-400 mb-1">Deposit Instructions</p>
                     <ul className="text-sm text-gray-400 space-y-1">
                       <li>• Send ETH or USDC to the address above</li>
-                      <li>• Only use Base network</li>
+                      <li>• Only use {CHAIN === 'base' ? 'Base' : 'Solana'} network</li>
                       <li>• Funds will appear in your wallet once confirmed</li>
                     </ul>
                   </div>
