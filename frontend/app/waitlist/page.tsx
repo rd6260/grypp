@@ -1,259 +1,56 @@
-
-'use client';
-
-import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import ThankYouPopup from './ThankYouPopup';
-import './particles-static.css';
-
-// Twitter post link stored at the top
-const TWITTER_POST_LINK = 'https://twitter.com/YourHandle/status/1234567890';
-
 export default function WaitlistPage() {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const supabase = createClient();
-      
-      // Insert email into waitlist table
-      const { error: insertError } = await supabase
-        .from('waitlist')
-        .insert([{ email }]);
-
-      if (insertError) {
-        throw insertError;
-      }
-
-      // Show success popup
-      setShowPopup(true);
-      setEmail('');
-    } catch (err: any) {
-      console.error('Error adding to waitlist:', err);
-      setError(err.message || 'Failed to join waitlist. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="waitlist-container">
-      {/* Particle background */}
-      <div className="particles-background">
-        {Array.from({ length: 300 }).map((_, i) => (
-          <div key={i} className="particle" />
-        ))}
-      </div>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      {/* Border Container */}
+      <div className="w-full h-full min-h-[calc(100vh-2rem)] border-2 border-gray-800 rounded-lg flex flex-col">
+        {/* Header */}
+        <header className="px-4 sm:px-8 pt-4 sm:pt-6 pb-2">
+          <div className="text-orange-500 font-mono text-sm sm:text-base">[CLOUT]</div>
+        </header>
 
-      {/* Content */}
-      <div className="content-wrapper">
-        {/* Logo */}
-        <div className="logo-container">
-          <div className="logo">
-            <img src="/clout-black.svg" alt="Clout" />
+        {/* Main Content */}
+        <main className="flex-1 flex items-center px-4 sm:px-8 pb-6 sm:py-0">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
+            {/* Left Side - Text Content */}
+            <div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+                Escape the 9–5 by turning viral content into Real Money
+              </h1>
+            </div>
+
+            {/* Right Side - Image */}
+            <div className="flex justify-center lg:justify-end">
+              <img 
+                src="/waitlist-image.png" 
+                alt="Money pie chart illustration" 
+                className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl"
+              />
+            </div>
           </div>
-        </div>
+        </main>
 
-        {/* Heading */}
-        <h1 className="heading">
-          <span className="heading-make">Make clips.</span>{' '}
-          <span className="heading-get">Get paid.</span>
-        </h1>
+        {/* Footer Section */}
+        <footer className="px-4 sm:px-8 py-6 sm:py-8 border-t border-gray-800">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
+            {/* Left Side - CTA Button */}
+            <div className="flex items-center">
+              <button className="w-full sm:w-auto bg-[#FA7154] hover:bg-orange-600 text-black font-bold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-colors">
+                ■ CLAIM YOUR SPOT
+              </button>
+            </div>
 
-        {/* Subheading */}
-        <p className="subheading">
-          Clip the best moments and earn every time they go viral on Clout.
-        </p>
-
-        {/* Call to action */}
-        <p className="cta-text">
-          Join now to be first in the new clip to earn economy
-        </p>
-
-        {/* Email form */}
-        <form onSubmit={handleSubmit} className="email-form">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="email-input"
-            disabled={loading}
-          />
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={loading}
-          >
-            {loading ? 'Joining...' : 'Join waitlist'}
-          </button>
-        </form>
-
-        {/* Error message */}
-        {error && (
-          <p className="error-message">{error}</p>
-        )}
-
-        {/* Limited spots text */}
-        <p className="limited-spots">limited spots available!</p>
+            {/* Right Side - Description */}
+            <div className="flex items-center">
+              <div className="text-left">
+                <div className="text-gray-400 text-xs font-mono mb-2">[WHAT IS CLOUT]</div>
+                <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                  CLOUT IS A MARKETPLACE WHERE EDITORS TURN VIRAL CLIPS INTO INCOME. UPLOAD YOUR BEST EDITS, EARN BASED ON PERFORMANCE, AND BOOST YOUR TWITTER SCORE TO UNLOCK BIGGER DEALS, EXCLUSIVE CREATOR ACCESS, & PREMIUM EARNING OPPORTUNITIES.
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
-
-      {/* Thank you popup */}
-      {showPopup && (
-        <ThankYouPopup
-          onClose={() => setShowPopup(false)}
-          twitterLink={TWITTER_POST_LINK}
-        />
-      )}
-
-      <style jsx>{`
-        .waitlist-container {
-          position: relative;
-          min-height: 100vh;
-          background: #000000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .content-wrapper {
-          position: relative;
-          z-index: 10;
-          text-align: center;
-          padding: 2rem;
-          max-width: 800px;
-        }
-
-        .logo-container {
-          margin-bottom: 2rem;
-          display: flex;
-          justify-content: center;
-        }
-
-        .logo {
-          background: white;
-          border-radius: 20px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .logo img {
-          height: 120px;
-          width: auto;
-        }
-
-        .heading {
-          font-size: 4rem;
-          font-weight: 400;
-          margin-bottom: 1.5rem;
-          line-height: 1.2;
-        }
-
-        .heading-make {
-          color: #FF6B4A;
-          font-weight: 300;
-        }
-
-        .heading-get {
-          color: #FFFFFF;
-          font-weight: 400;
-        }
-
-        .subheading {
-          color: #FFFFFF;
-          font-size: 1.125rem;
-          margin-bottom: 1rem;
-          font-weight: 300;
-        }
-
-        .cta-text {
-          color: #FFFFFF;
-          font-size: 1rem;
-          margin-bottom: 2.5rem;
-          font-weight: 300;
-        }
-
-        .email-form {
-          display: flex;
-          gap: 0;
-          max-width: 600px;
-          margin: 0 auto 1.5rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .email-input {
-          flex: 1;
-          padding: 1rem 1.5rem;
-          background: transparent;
-          border: none;
-          color: #FFFFFF;
-          font-size: 1rem;
-          outline: none;
-        }
-
-        .email-input::placeholder {
-          color: rgba(255, 255, 255, 0.5);
-        }
-
-        .submit-button {
-          padding: 1rem 2rem;
-          background: #FF6B4A;
-          color: #FFFFFF;
-          border: none;
-          font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .submit-button:hover:not(:disabled) {
-          background: #FF5534;
-        }
-
-        .submit-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .error-message {
-          color: #FF6B4A;
-          font-size: 0.875rem;
-          margin-bottom: 1rem;
-        }
-
-        .limited-spots {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 0.875rem;
-          font-weight: 300;
-        }
-
-        @media (max-width: 768px) {
-          .heading {
-            font-size: 2.5rem;
-          }
-
-          .email-form {
-            flex-direction: column;
-          }
-
-          .submit-button {
-            width: 100%;
-          }
-        }
-      `}</style>
     </div>
   );
 }
